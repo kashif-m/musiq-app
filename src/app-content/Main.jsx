@@ -11,17 +11,21 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-
+      selectedScreen: 'discover'
     }
   }
+
+  updateScreen = screen => this.setState({selectedScreen: screen})
   
   render() {
 
     const {user} = this.props
+    const {selectedScreen} = this.state
   
     return (
       <div className='main' >
         <SideBar
+          screen={[selectedScreen, this.updateScreen]}
           user={user} />
         <Content />
         <Player />

@@ -7,7 +7,6 @@ export default class SideBar extends Component {
     super(props)
 
     this.state = {
-      selectedOption: 'discover'
     }
   }
 
@@ -21,21 +20,26 @@ export default class SideBar extends Component {
     </React.Fragment>
   )
 
-  renderSidebarOptions = () => (
-    <div className="sidebar--options">
-      <div className="options">
-        <div className={`option ${this.state.selectedOption === 'discover' ? 'selected' : ''}`}
-          onClick={() => this.setState({selectedOption: 'discover'})}
-         >Discover</div>
-        <div className={`option ${this.state.selectedOption === 'music' ? 'selected' : ''}`}
-          onClick={() => this.setState({selectedOption: 'music'})}
-         >Liked Music</div>
-        <div className={`option ${this.state.selectedOption === 'playlist' ? 'selected' : ''}`}
-          onClick={() => this.setState({selectedOption: 'playlist'})}
-         >Saved Playlists</div>
+  renderSidebarOptions = () => {
+    
+    const {screen} = this.props
+    const [selectedScreen, updateScreen] = screen
+    return (
+      <div className="sidebar--options">
+        <div className="options">
+          <div className={`option ${selectedScreen === 'discover' ? 'selected' : ''}`}
+            onClick={() => updateScreen('discover')}
+           >Discover</div>
+          <div className={`option ${selectedScreen === 'music' ? 'selected' : ''}`}
+            onClick={() => updateScreen('music')}
+           >Liked Music</div>
+          <div className={`option ${selectedScreen === 'playlist' ? 'selected' : ''}`}
+            onClick={() => updateScreen('playlist')}
+           >Saved Playlists</div>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   render() {
 
