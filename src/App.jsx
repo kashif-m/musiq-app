@@ -11,10 +11,14 @@ export default class App extends Component {
   }
 
   render() {
+
+    const {user} = this.state
     return (
       <div className='app' >
-        <Header />
-        <Main />
+        <Header
+          user={user} />
+        <Main
+          user={user} />
       </div>
     )
   }

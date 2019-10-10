@@ -3,6 +3,8 @@ import React from 'react'
 
 export default props => {
 
+  const {user} = props
+
   const renderSearch = () => (
     <div className="header--search">
       <input type="text" placeholder='Search for songs...' />
@@ -12,10 +14,10 @@ export default props => {
 
   return (
     <div className="header">
-      <div className="logo">Musiq</div>
-      <div className="header--account">
-        <img src="" alt="acc"/>
-      </div>
+      <div className="logo">musiq</div>
+      {
+        user && <div className="img">IMAGE BRO</div>
+      }
     </div>
   )
 }
