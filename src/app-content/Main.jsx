@@ -11,7 +11,13 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-      selectedScreen: 'playlist'
+      selectedScreen: 'playlist',
+      playingNow: {
+        title: 'My Songs Know What You Did In The Dark (Light Em Up)',
+        artist: 'Fall Out Boy',
+        album: 'Save Rock and Roll',
+        img: 'url'
+      }
     }
   }
 
@@ -20,7 +26,7 @@ export default class Main extends Component {
   render() {
 
     const {user} = this.props
-    const {selectedScreen} = this.state
+    const {selectedScreen, playingNow} = this.state
   
     return (
       <div className='main' >
@@ -30,7 +36,13 @@ export default class Main extends Component {
         <Content
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
-        <Player />
+        {
+          playingNow ?
+          <Player
+            playingNow={playingNow}
+            user={user} />
+          : null
+        }
       </div>
     )
   }
