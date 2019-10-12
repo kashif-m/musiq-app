@@ -35,7 +35,7 @@ export default class SideBar extends Component {
            >Liked Music</div>
           <div className={`option ${selectedScreen === 'playlist' ? 'selected' : ''}`}
             onClick={() => updateScreen('playlist')}
-           >Saved Playlists</div>
+           >Playlists</div>
         </div>
       </div>
     )

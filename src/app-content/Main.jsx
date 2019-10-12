@@ -11,7 +11,7 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-      selectedScreen: 'discover'
+      selectedScreen: 'playlist'
     }
   }
 
@@ -27,7 +27,9 @@ export default class Main extends Component {
         <SideBar
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
-        <Content />
+        <Content
+          screen={[selectedScreen, this.updateScreen]}
+          user={user} />
         <Player />
       </div>
     )
