@@ -4,14 +4,18 @@ import React, {useState, useEffect} from 'react'
 export default props => {
 
   const {playingNow, user} = props
+  const [fullscreen, setFullscreen] = useState(true)
   const [title, setTitle] = useState(playingNow.title)
 
   useEffect(() => {
 
-    if(playingNow.title.length > 20)
+    console.log(fullscreen)
+    if(playingNow.title.length > 20 && !fullscreen)
       setTitle(playingNow.title.slice(0, 20) + '...')
+    else
+      setTitle(playingNow.title)
 
-  }, [playingNow])
+  }, [playingNow, fullscreen])
 
   const renderPlayer = () => {
 
@@ -23,15 +27,28 @@ export default props => {
   }
   
   return (
-    <div className='player' >
+    <div className={`player${fullscreen ? ' fullscreen' : ''}`} >
       {
-        // <img src={playingNow.img} alt="img"/>
+        fullscreen && <img className='close'
+          src={require('../../assets/images/close.svg')} alt="x"
+          onClick={() => setFullscreen(false)} />
       }
       <div className="img">IMG</div>
-      <div className="title">{title}</div>
-      <div className="artist">{playingNow.artist}</div>
-      <div className="save">+</div>
-      <div className="fullscreen">^</div>
+      <div className="song-details">
+        <div className="title">{title}</div>
+        <div className="artist">{playingNow.artist}</div>
+      </div>
+      <div className="song-options">
+        <div className="save">+</div>
+        <div className="fullscreen"
+          onClick={() => setFullscreen(!fullscreen)} >
+          {
+            fullscreen
+            ? <img src={null} alt="v"/>
+            : <img src={null} alt="^"/>
+          }  
+        </div>
+      </div>
       {renderPlayer()}
     </div>
   )

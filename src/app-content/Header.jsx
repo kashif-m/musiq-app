@@ -12,11 +12,18 @@ export default props => {
     </div>
   )
 
+  const renderUserBox = () => (
+    <div className="user-box">
+      <img src={require('../assets/images/avatar.svg')} alt="img"/>
+      <div className="username">{user.username}</div>
+    </div>
+  )
+
   return (
     <div className="header">
       <div className="logo">musiq</div>
       {
-        user && <div className="img">IMAGE BRO</div>
+        user && renderUserBox()
       }
     </div>
   )

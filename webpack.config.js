@@ -39,7 +39,7 @@ module.exports = {
   plugins: [CSSPlugin, HTMLPlugin],
   devServer: {
     proxy: [{
-      context: ['/user'],
+      context: ['/user, /user/new'],
       target: 'http://localhost:5000'
     }],
     historyApiFallback: true

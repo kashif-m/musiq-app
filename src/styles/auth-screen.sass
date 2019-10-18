@@ -1,0 +1,63 @@
+
+.auth-screen
+  position: absolute
+  height: 92vh
+  width: 100vw
+  display: flex
+  flex-flow: column
+  align-items: center
+  justify-content: flex-end
+  background-image: linear-gradient(rgba(0, 0, 0, .7), $dark)
+  font:
+    family: GillSans
+    size: 30
+    weight: 900
+
+  img
+    cursor: pointer
+    height: 50
+    position: relative
+    left: 150
+    bottom: 50
+    transition: all .3s
+    &:hover
+      height: 55
+      transition: all .2s
+
+  .buttons
+    width: 300
+    display: flex
+    justify-content: space-around
+    margin-bottom: 20
+    .button
+      cursor: pointer
+      font-size: 25
+      border-radius: 100px
+      padding: 5 30 2 30
+      &.selected
+        color: $dark
+        background-color: $yellow
+
+  .form
+    padding: 20 0
+    display: flex
+    flex-flow: column
+    input
+      background-color: #DEDEDE
+      font:
+        family: PTSansBold
+        size: 20
+      margin: 20 0
+      padding: 5 20
+      border-radius: 100px
+      border: 0
+      &:focus
+        background-color: white
+
+  .submit
+    cursor: pointer
+    font-size: 40
+    background-color: $green
+    padding: 5 30 1 30
+    margin: 10 0 20vh 0
+    border-radius: 100px

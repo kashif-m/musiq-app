@@ -10,15 +10,22 @@ export default class SideBar extends Component {
     }
   }
 
-  renderLoginScreen = () => (
-    <React.Fragment>
-      <div className="info">Please log in or register.</div>
-      <div className="buttons">
-        <div className="login">login</div>
-        <div className="register">register</div>
-      </div>
-    </React.Fragment>
-  )
+  renderLoginScreen = () => {
+
+    const [showAuthScreen, updateAuthScreen] = this.props.authScreen
+  
+    return (
+      <React.Fragment>
+        <div className="info">Please log in or register.</div>
+        <div className="buttons">
+          <div className="login" 
+            onClick={() => updateAuthScreen('login')} >login</div>
+          <div className="register"
+            onClick={() => updateAuthScreen('register')} >register</div>
+        </div>
+      </React.Fragment>
+    )
+  }
 
   renderSidebarOptions = () => {
     
@@ -44,11 +51,11 @@ export default class SideBar extends Component {
   render() {
 
     const {user} = this.props
-
+    console.log(user)
     return (
       <div className='main--sidebar' >
         {
-          user ?
+          !user ?
           this.renderLoginScreen()
           :
           this.renderSidebarOptions()
