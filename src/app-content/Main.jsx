@@ -4,7 +4,6 @@ import React, { Component } from 'react'
 import AuthScreen from './main-content/AuthScreen.jsx'
 import Content from './main-content/Content.jsx'
 import SideBar from './main-content/SideBar.jsx'
-import Player from './main-content/Player.jsx'
 
 export default class Main extends Component {
 
@@ -13,12 +12,6 @@ export default class Main extends Component {
 
     this.state = {
       selectedScreen: 'discover',
-      playingNow: {
-        title: 'My Songs Know What You Did In The Dark (Light Em Up)',
-        artist: 'Fall Out Boy',
-        album: 'Save Rock and Roll',
-        img: 'url'
-      },
       showAuthScreen: 'login'
     }
   }
@@ -29,7 +22,7 @@ export default class Main extends Component {
   render() {
 
     const [user, updateUser] = this.props.user
-    const {selectedScreen, playingNow, showAuthScreen} = this.state
+    const {selectedScreen, showAuthScreen} = this.state
   
     return (
       <div className='main' >
@@ -40,13 +33,6 @@ export default class Main extends Component {
         <Content
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
-        {
-          playingNow ?
-          <Player
-            playingNow={playingNow}
-            user={user} />
-          : null
-        }
         {
           showAuthScreen ?
           <AuthScreen

@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react'
 export default props => {
 
   const {playingNow, user} = props
-  const [fullscreen, setFullscreen] = useState(true)
+  const [fullscreen, setFullscreen] = useState(false)
   const [title, setTitle] = useState(playingNow.title)
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default props => {
     <div className={`player${fullscreen ? ' fullscreen' : ''}`} >
       {
         fullscreen && <img className='close'
-          src={require('../../assets/images/close.svg')} alt="x"
+          src={require('../assets/images/close.svg')} alt="x"
           onClick={() => setFullscreen(false)} />
       }
       <div className="img">IMG</div>

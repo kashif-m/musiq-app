@@ -2,7 +2,7 @@
 .app
   display: grid
   max-height: 100vh
-  grid-template-rows: max-content auto
+  grid-template-rows: max-content auto max-content
 
   .header
     height: 8vh
@@ -15,6 +15,35 @@
     font:
       family: AvenirNextLTProBold
       size: 30
+
+    .search-box
+      input
+        cursor: default
+        min-width: 500
+        width: 30vw
+        border: 0
+        padding: 10 20 8 20
+        border-radius: 1px
+        border-bottom: 2px solid white
+        font:
+          family: MontserratBold
+          size: 20
+        transition: background-color .3s
+        transition: border-color .1s
+        &:focus
+          background-color: $red
+          border-color: $deep-red
+          transition: all .2s
+          &::placeholder
+            color: #444444
+
+      img
+        font-size: 15
+        // height: min-content
+        cursor: pointer
+        position: relative
+        right: 40
+        color: black
 
     .user-box
       color: black
@@ -56,7 +85,7 @@
 
     display: grid
     grid-template-columns: max-content auto
-    grid-template-rows: 1fr max-content
+    // grid-template-rows: 1fr
 
     &--sidebar
       margin: 50 0
@@ -187,102 +216,103 @@
           border-radius: 100px
 
 
-    .player
-      min-height: 10vh
-      border-top: 2px solid $rich-black
-      background-color: $dark
-      grid-column: 1 / -1
+  .player
+    min-height: 10vh
+    border-top: 2px solid $rich-black
+    background-color: $dark
+    color: white
+    grid-column: 1 / -1
 
-      display: grid
-      grid-template-columns: repeat(2, max-content) auto max-content
-      grid-template-rows: max-content
+    display: grid
+    grid-template-columns: repeat(2, max-content) auto max-content
+    grid-template-rows: max-content
 
-      font:
-        family: GothamMedium
-        weight: 900
+    font:
+      family: GothamMedium
+      weight: 900
 
-      .img
+    .img
+      grid-row: 1 / -1
+      width: 10vh
+      height: 10vh
+      background-color: $red
+
+    .song-details
+      display: flex
+      flex-flow: column
+      grid-column: 2 / 3
+      align-self: center
+      padding: 10 0
+      margin: 0 30
+      .title
+        font-size: 40
+      .artist
+        align-self: flex-start
+        padding-top: 5
+        color: #BEBEBE
+        cursor: pointer
+        &:hover
+          color: white
+
+    .song-options
+      display: flex
+      align-items: center
+      .fullscreen
+        font-size: 35 !important
+        position: relative
+        top: 8
+      .save, .fullscreen
+        color: #BEBEBE
+        font-family: GothamMedium
+        font-size: 30
+        cursor: pointer
+        margin: 20
         grid-row: 1 / -1
-        width: 10vh
-        height: 10vh
-        background-color: $red
-
-      .song-details
-        display: flex
-        flex-flow: column
-        grid-column: 2 / 3
         align-self: center
-        padding: 10 0
-        margin: 0 30
-        .title
-          font-size: 40
-        .artist
-          align-self: flex-start
-          padding-top: 5
-          color: #BEBEBE
-          cursor: pointer
-          &:hover
-            color: white
+        &:hover
+          color: white
 
+    .music-player
+      grid-column: 3 / 4
+      grid-row: 1 / -1
+      background-color: $yellow
+
+    &.fullscreen
+      position: absolute
+      box-sizing: border-box
+      top: 0
+      height: 100vh
+      width: 100vw
+      padding-top: 100
+      grid-template-columns: max-content auto
+      grid-template-rows: max-content 1fr max-content
+      & > div
+        grid-column: 1 / -1
+      .close
+        cursor: pointer
+        grid-row: 1 / 2
+        grid-column: 2 / 3
+        height: 50
+        justify-self: flex-end
+        margin-right: 100
+      .img
+        grid-row: 1 / 2
+        height: 50vh
+        width: 50vh
+        margin-left: 100
+      .song-details
+        grid-column: 1 / 2
+        grid-row: 2 / 3
+        align-self: flex-end
+        margin: 0 0 50 100
       .song-options
-        display: flex
-        align-items: center
-        .fullscreen
-          font-size: 35 !important
-          position: relative
-          top: 8
-        .save, .fullscreen
-          color: #BEBEBE
-          font-family: GothamMedium
-          font-size: 30
-          cursor: pointer
-          margin: 20
-          grid-row: 1 / -1
-          align-self: center
-          &:hover
-            color: white
-
+        grid-row: 2 / 3
+        grid-column: 2 / 3
+        align-self: flex-end
+        justify-self: flex-end
+        padding: 0 50 50 0
       .music-player
-        grid-column: 3 / 4
-        grid-row: 1 / -1
-        background-color: $yellow
-
-      &.fullscreen
-        position: absolute
-        box-sizing: border-box
-        top: 0
-        height: 100vh
-        width: 100vw
-        padding-top: 100
-        grid-template-columns: max-content auto
-        grid-template-rows: max-content 1fr max-content
-        & > div
-          grid-column: 1 / -1
-        .close
-          cursor: pointer
-          grid-row: 1 / 2
-          grid-column: 2 / 3
-          height: 50
-          justify-self: flex-end
-          margin-right: 100
-        .img
-          grid-row: 1 / 2
-          height: 50vh
-          width: 50vh
-          margin-left: 100
-        .song-details
-          grid-column: 1 / 2
-          grid-row: 2 / 3
-          align-self: flex-end
-          margin: 0 0 50 100
-        .song-options
-          grid-row: 2 / 3
-          grid-column: 2 / 3
-          align-self: flex-end
-          justify-self: flex-end
-          padding: 0 50 50 0
-        .music-player
-          min-height: 10vh
-          max-height: 100
-          grid-row: 5 / 6
-      
+        min-height: 10vh
+        max-height: 100
+        grid-row: 5 / 6
+    

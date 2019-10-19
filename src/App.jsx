@@ -3,12 +3,21 @@ import React, { Component } from 'react'
 
 import Header from './app-content/Header.jsx'
 import Main from './app-content/Main.jsx'
+import Player from './app-content/Player.jsx'
+import SearchResults from './app-content/SearchResults.jsx'
 import axios from 'axios'
 
 export default class App extends Component {
 
   state = {
-    user: false
+    user: false,
+    playingNow: {
+      title: 'My Songs Know What You Did In The Dark (Light Em Up)',
+      artist: 'Fall Out Boy',
+      album: 'Save Rock and Roll',
+      img: 'url'
+    },
+    search: false
   }
 
   componentDidMount() {
@@ -34,16 +43,32 @@ export default class App extends Component {
   }
 
   updateUser = user => this.setState({user})
+  updateSearch = search => this.setState({search})
 
   render() {
 
-    const {user} = this.state
+    const {user, playingNow, search} = this.state
     return (
       <div className='app' >
         <Header
-          user={user} />
-        <Main
-          user={[user, this.updateUser]} />
+          user={user}
+          search={[search, this.updateSearch]} />
+        {
+          !search ?
+          <Main
+            user={[user, this.updateUser]} />
+          :
+          <SearchResults
+            user={user}
+            search={search} />
+        }
+        {
+          playingNow ?
+          <Player
+            playingNow={playingNow}
+            user={user} />
+          : null
+        }
       </div>
     )
   }
