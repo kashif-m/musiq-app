@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import Discover from './screens/Discover.jsx'
 import Liked from './screens/Liked.jsx'
 import Playlist from './screens/Playlist.jsx'
+import Search from './screens/Search.jsx'
 
 export default class Content extends Component {
 
@@ -28,6 +29,8 @@ export default class Content extends Component {
           <Liked />
           : selectedScreen === 'playlist' ?
           <Playlist />
+          : selectedScreen === 'search' ?
+          <Search />
           : null
         }
       </div>

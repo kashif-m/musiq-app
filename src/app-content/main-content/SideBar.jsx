@@ -35,14 +35,13 @@ export default class SideBar extends Component {
       <div className="sidebar--options">
         <div className="options">
           <div className={`option ${selectedScreen === 'discover' ? 'selected' : ''}`}
-            onClick={() => updateScreen('discover')}
-           >Discover</div>
+            onClick={() => updateScreen('discover')} >Discover</div>
           <div className={`option ${selectedScreen === 'music' ? 'selected' : ''}`}
-            onClick={() => updateScreen('music')}
-           >Liked Music</div>
+            onClick={() => updateScreen('music')} >Liked Music</div>
           <div className={`option ${selectedScreen === 'playlist' ? 'selected' : ''}`}
-            onClick={() => updateScreen('playlist')}
-           >Playlists</div>
+            onClick={() => updateScreen('playlist')} >Playlists</div>
+          <div className={`option ${selectedScreen === 'search' ? 'selected' : ''}`}
+            onClick={() => updateScreen('search')} >Search</div>
         </div>
       </div>
     )

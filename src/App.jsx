@@ -4,8 +4,6 @@ import React, { Component } from 'react'
 import Header from './app-content/Header.jsx'
 import Main from './app-content/Main.jsx'
 import Player from './app-content/Player.jsx'
-import SearchResults from './app-content/SearchResults.jsx'
-import axios from 'axios'
 
 export default class App extends Component {
 
@@ -16,8 +14,7 @@ export default class App extends Component {
       artist: 'Fall Out Boy',
       album: 'Save Rock and Roll',
       img: 'url'
-    },
-    search: false
+    }
   }
 
   componentDidMount() {
@@ -53,15 +50,8 @@ export default class App extends Component {
         <Header
           user={user}
           search={[search, this.updateSearch]} />
-        {
-          !search ?
-          <Main
-            user={[user, this.updateUser]} />
-          :
-          <SearchResults
-            user={user}
-            search={search} />
-        }
+        <Main
+          user={[user, this.updateUser]} />
         {
           playingNow ?
           <Player

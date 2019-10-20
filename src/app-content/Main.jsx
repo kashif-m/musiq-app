@@ -11,7 +11,7 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-      selectedScreen: 'discover',
+      selectedScreen: 'search',
       showAuthScreen: 'login'
     }
   }

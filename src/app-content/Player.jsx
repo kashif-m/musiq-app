@@ -39,15 +39,11 @@ export default props => {
         <div className="artist">{playingNow.artist}</div>
       </div>
       <div className="song-options">
-        <div className="save">+</div>
-        <div className="fullscreen"
-          onClick={() => setFullscreen(!fullscreen)} >
-          {
-            fullscreen
-            ? <img src={null} alt="v"/>
-            : <img src={null} alt="^"/>
-          }  
-        </div>
+        <img src={require('../assets/images/plus.svg')} alt="+"
+          className='save' />
+        <img src={require('../assets/images/up-arrow.svg')} alt="^"
+          className='fullscreen'
+          onClick={() => setFullscreen(!fullscreen)} />
       </div>
       {renderPlayer()}
     </div>

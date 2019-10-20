@@ -16,35 +16,6 @@
       family: AvenirNextLTProBold
       size: 30
 
-    .search-box
-      input
-        cursor: default
-        min-width: 500
-        width: 30vw
-        border: 0
-        padding: 10 20 8 20
-        border-radius: 1px
-        border-bottom: 2px solid white
-        font:
-          family: MontserratBold
-          size: 20
-        transition: background-color .3s
-        transition: border-color .1s
-        &:focus
-          background-color: $red
-          border-color: $deep-red
-          transition: all .2s
-          &::placeholder
-            color: #444444
-
-      img
-        font-size: 15
-        // height: min-content
-        cursor: pointer
-        position: relative
-        right: 40
-        color: black
-
     .user-box
       color: black
       cursor: pointer
@@ -138,24 +109,27 @@
 
 
     &--content
-      overflow: auto
+      overflow: hidden
       position: relative
       left: 15
       & > div
+        overflow: auto
+        box-sizing: border-box
+        max-height: 100%
         display: flex
         flex-flow: column
         padding-top: 50
+        padding-left: 50
         .heading
+          margin-bottom: 20
           font:
             size: 50
             family: GothamMedium
             weight: 900
       
       .discover
-        // align-items: center
-        padding-left: 50
+        padding-bottom: 50
         &--options
-          padding-top: 20
           margin-bottom: 80
           display: flex
           .option
@@ -193,10 +167,9 @@
 
 
       .liked-music, .playlists
-        padding-left: 50
         .empty
           color: #AEAEAE
-          margin: 20 0 0 5
+          margin-left: 5
           font:
             family: GillSans
             size: 22
@@ -214,6 +187,94 @@
           background-color: $red
           align-self: flex-start
           border-radius: 100px
+
+      .search
+        &-box
+          input
+            cursor: default
+            min-width: 500
+            width: 500
+            border: 0
+            padding: 10 20 8 20
+            border-radius: 1px
+            border-bottom: 2px solid white
+            font:
+              family: MontserratBold
+              size: 20
+            // background-color: $red
+            transition: all .5s
+            &:focus
+              color: white
+              background-color: $dark
+              border-color: $deep-red
+              transition: all .2s
+              &::placeholder
+                color: #444444
+
+          img
+            height: 20
+            cursor: pointer
+            position: relative
+            top: 2
+            right: 30
+            color: black
+
+        &-results
+          overflow: auto
+          display: flex
+          flex-flow: column
+          margin: 30 0
+          padding-left: 20
+          & > div
+            margin-bottom: 50
+            font:
+              family: GillSans
+              size: 20
+            .heading
+              font-size: 30
+              margin-bottom: 10
+
+            .track, .artist, .album
+              width: max-content
+              display: grid
+              grid-template-columns: max-content auto
+              grid-template-rows: auto max-content
+              img
+                grid-row: 1 / -1
+
+            .track, .album
+              justify-self: flex-start
+              margin: 10
+              img
+                cursor: pointer
+              .title
+                cursor: pointer
+                align-self: center
+                margin-left: 20
+                font:
+                  size: 25
+                  weight: 900
+              .artist
+                font-size: 17
+                color: #dddddd
+                margin: 0 0 10 21
+                &:hover
+                  cursor: pointer
+                  color: white
+
+            .artist
+              display: flex
+              align-items: center
+              margin: 10
+              img
+                cursor: pointer
+                border-radius: 100%
+              .title
+                cursor: pointer
+                margin-left: 20
+                font:
+                  size: 25
+                  weight: 900
 
 
   .player
@@ -255,23 +316,14 @@
           color: white
 
     .song-options
+      width: 200
       display: flex
       align-items: center
-      .fullscreen
-        font-size: 35 !important
-        position: relative
-        top: 8
+      justify-content: space-around
       .save, .fullscreen
-        color: #BEBEBE
-        font-family: GothamMedium
-        font-size: 30
         cursor: pointer
-        margin: 20
-        grid-row: 1 / -1
-        align-self: center
-        &:hover
-          color: white
-
+        font-size: 30
+        height: 35
     .music-player
       grid-column: 3 / 4
       grid-row: 1 / -1
