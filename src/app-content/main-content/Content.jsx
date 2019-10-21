@@ -12,13 +12,18 @@ export default class Content extends Component {
     super(props)
 
     this.state = {
-
+      searchResults: false
     }
   }
+
+  updateSearchResults = searchResults => this.setState({searchResults})
   
   render() {
 
+    const {token} = this.props
+    const [playingNow, updatePlayingNow] = this.props.playingNow
     const [selectedScreen, updateScreen] = this.props.screen
+    const {searchResults} = this.state
   
     return (
       <div className='main--content' >
@@ -30,7 +35,10 @@ export default class Content extends Component {
           : selectedScreen === 'playlist' ?
           <Playlist />
           : selectedScreen === 'search' ?
-          <Search />
+          <Search
+            searchResults={[searchResults, this.updateSearchResults]}
+            playingNow={[playingNow, updatePlayingNow]}
+            token={token} />
           : null
         }
       </div>

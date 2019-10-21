@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react'
+import axios from 'axios'
 
 import Header from './app-content/Header.jsx'
 import Main from './app-content/Main.jsx'
@@ -10,11 +11,19 @@ export default class App extends Component {
   state = {
     user: false,
     playingNow: {
-      title: 'My Songs Know What You Did In The Dark (Light Em Up)',
-      artist: 'Fall Out Boy',
-      album: 'Save Rock and Roll',
-      img: 'url'
-    }
+      album: {
+        images: [{
+          url: null
+        }, {
+          url: null
+        }]
+      },
+      name: 'Led Zepelin',
+      artists: [{
+        name: null
+      }]
+    },
+    token: false
   }
 
   componentDidMount() {
@@ -28,6 +37,10 @@ export default class App extends Component {
       } catch(err) {
         localStorage.removeItem('musiq__user')
       }
+
+    axios.get('http://localhost:5000/token')
+      .then(res => !res.data.error ? this.setState({token: res.data}) : this.setState({token: false}))
+      .catch(err => console.log(err))
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -40,17 +53,18 @@ export default class App extends Component {
   }
 
   updateUser = user => this.setState({user})
-  updateSearch = search => this.setState({search})
+  updatePlayingNow = song => this.setState({playingNow: song})
 
   render() {
 
-    const {user, playingNow, search} = this.state
+    const {user, playingNow, token} = this.state
     return (
       <div className='app' >
         <Header
-          user={user}
-          search={[search, this.updateSearch]} />
+          user={user} />
         <Main
+          playingNow={[playingNow, this.updatePlayingNow]}
+          token={token}
           user={[user, this.updateUser]} />
         {
           playingNow ?

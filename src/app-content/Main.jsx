@@ -16,12 +16,23 @@ export default class Main extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+
+    if(JSON.stringify(nextProps.playingNow[0]) !== JSON.stringify(this.props.playingNow[0]) &&
+      JSON.stringify(nextProps.user[0]) === JSON.stringify(nextProps.user[0]) &&
+      JSON.stringify(nextProps.token) === JSON.stringify(nextProps.token))
+      return false
+    return true
+  }
+
   updateScreen = screen => this.setState({selectedScreen: screen})
   updateAuthScreen = val => this.setState({showAuthScreen: val})
   
   render() {
 
+    const {token} = this.props
     const [user, updateUser] = this.props.user
+    const [playingNow, updatePlayingNow] = this.props.playingNow
     const {selectedScreen, showAuthScreen} = this.state
   
     return (
@@ -31,6 +42,8 @@ export default class Main extends Component {
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
         <Content
+          playingNow={[playingNow, updatePlayingNow]}
+          token={token}
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
         {

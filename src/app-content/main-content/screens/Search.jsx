@@ -2,38 +2,39 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 
-const youtubeAPI = require('../../../config/keys').youtubeAPI
-const spotifyToken = require('../../../config/keys').spotifyToken
-
-export default () => {
+export default props => {
 
   const [searchParams, setSearchParams] = useState({
     type: ['album', 'track', 'artist'],
     limit: 5
   })
-  const [searchResults, setSearchResults] = useState(false)
+  const [searchResults, setSearchResults] = props.searchResults
   let seachQuery = {}
 
-  useEffect(() => {
-
-    const items = localStorage.getItem('items')
-    setSearchResults(JSON.parse(items))
-  }, [])
+  const [playingNow, updatePlayingNow] = props.playingNow
 
   const querySearch = () => {
 
+    const {token} = props
+    const access_token = 'Bearer ' + token.access_token
     const {limit, type} = searchParams
     const query = encodeURI(seachQuery.value)
     axios.get(`https://api.spotify.com/v1/search?q=${query}&type=${type.join(',')}&limit=${limit}`,
-      { headers: { Authorization: spotifyToken } })
-      .then(res => setSearchResults(res.data))
+      { headers: { Authorization: access_token } })
+      .then(res => {
+        Object.keys(res.data).length > 0
+        ? setSearchResults(res.data)
+        : setSearchResults(false)
+      })
       .catch(err => console.log(err.response))
   }
 
   const renderSearch = () => (
     <div className="search-box">
-      <input type="text" placeholder='Search for songs...'
+      <input type="text" placeholder='Search ...'
         ref={node => seachQuery = node}
+        defaultValue={searchResults ? 
+          new URL(searchResults[Object.keys(searchResults)[0]].href).searchParams.get('query') : null}
         onKeyPress={key => key.charCode === 13 ? querySearch() : null} />
       <img src={require('../../../assets/images/search.svg')} alt="search"
         onClick={() => querySearch()} />
@@ -51,11 +52,13 @@ export default () => {
           items.map(item => {
             const {artists, name, id, album} = item
             const {images} = album
-            console.log(images)
+            console.log(item)
             return (
               <div className="track" key={id} >
-                <img src={images.length > 0 ? images[2].url : null} alt="ti"/>
-                <div className="title">{name}</div>
+                <img src={images.length > 0 ? images[2].url : null} alt="ti"
+                  onClick={() => updatePlayingNow(item)} />
+                <div className="title"
+                  onClick={() => updatePlayingNow(item)} >{name}</div>
                 <div className="artist">{artists[0].name}</div>
               </div>
             )
@@ -118,16 +121,20 @@ export default () => {
 
     return (
       <div className="search-results">
-        {renderTracks(tracks)}
-        {renderAlbums(albums)}
-        {renderArtists(artists)}
+        {tracks.items.length > 0 && renderTracks(tracks)}
+        {albums.items.length > 0 && renderAlbums(albums)}
+        {artists.items.length > 0 && renderArtists(artists)}
       </div>
     )
   }
   
   return (
     <div className="search">
-      <div className="heading"> Search </div>
+      <div className="heading">
+        {
+          searchResults ? 'Search Results' : 'Search'
+        }
+      </div>
       {renderSearch()}
       {
         searchResults ?
