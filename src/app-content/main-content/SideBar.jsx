@@ -50,7 +50,6 @@ export default class SideBar extends Component {
   render() {
 
     const {user} = this.props
-    console.log(user)
     return (
       <div className='main--sidebar' >
         {

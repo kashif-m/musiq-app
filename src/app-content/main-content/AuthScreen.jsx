@@ -17,7 +17,7 @@ export default class AuthScreen extends Component {
     const [user, updateUser] = this.props.user
     const [authScreen, updateAuthScreen] = this.props.authScreen
 
-    if(!user)
+    if(user)
       updateAuthScreen(false)
   }
 
@@ -32,6 +32,7 @@ export default class AuthScreen extends Component {
 
   submit = requestType => {
 
+    const {getSpotifyCode} = this.props
     const [user, updateUser] = this.props.user
     const [authScreen, updateAuthScreen] = this.props.authScreen
 
@@ -43,7 +44,6 @@ export default class AuthScreen extends Component {
     if(requestType === 'register')
       axios.post('http://localhost:5000/user/new', {user: newUser})
         .then(res => {
-          console.log(res.data)
           console.log('registered.')
           updateAuthScreen('login')
         })
@@ -52,9 +52,8 @@ export default class AuthScreen extends Component {
       axios.post('http://localhost:5000/user/login', {user: newUser})
         .then(res => {
           if(res.data) {
-            console.log(res.data)
-            updateUser(res.data)
-            updateAuthScreen(false)
+            this.saveUser(res.data)
+            getSpotifyCode(res.data)
           }
         })
         .catch(err => console.log(err))
@@ -72,6 +71,8 @@ export default class AuthScreen extends Component {
          />
     </div>
   )
+
+  saveUser = user => localStorage.setItem('musiq__user', JSON.stringify(user))
 
   render() {
 

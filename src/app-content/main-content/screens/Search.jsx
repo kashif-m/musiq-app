@@ -17,11 +17,13 @@ export default props => {
 
     const {token} = props
     const access_token = 'Bearer ' + token.access_token
+    console.log(access_token)
     const {limit, type} = searchParams
     const query = encodeURI(seachQuery.value)
     axios.get(`https://api.spotify.com/v1/search?q=${query}&type=${type.join(',')}&limit=${limit}`,
       { headers: { Authorization: access_token } })
       .then(res => {
+        console.log(res.data)
         Object.keys(res.data).length > 0
         ? setSearchResults(res.data)
         : setSearchResults(false)

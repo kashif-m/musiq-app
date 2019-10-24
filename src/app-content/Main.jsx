@@ -12,7 +12,7 @@ export default class Main extends Component {
 
     this.state = {
       selectedScreen: 'search',
-      showAuthScreen: 'login'
+      showAuthScreen: false
     }
   }
 
@@ -30,10 +30,11 @@ export default class Main extends Component {
   
   render() {
 
-    const {token} = this.props
+    const {token, getSpotifyCode} = this.props
     const [user, updateUser] = this.props.user
     const [playingNow, updatePlayingNow] = this.props.playingNow
     const {selectedScreen, showAuthScreen} = this.state
+    console.log(showAuthScreen)
   
     return (
       <div className='main' >
@@ -49,6 +50,7 @@ export default class Main extends Component {
         {
           showAuthScreen ?
           <AuthScreen
+            getSpotifyCode={getSpotifyCode}
             authScreen={[showAuthScreen, this.updateAuthScreen]}
             user={[user, updateUser]} />
           : null

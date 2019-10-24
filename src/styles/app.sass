@@ -2,7 +2,7 @@
 .app
   display: grid
   max-height: 100vh
-  grid-template-rows: max-content auto max-content
+  grid-template-rows: max-content 1fr max-content
 
   .header
     height: 8vh
@@ -49,14 +49,14 @@
         background-color: $yellow
 
   .main
-    max-height: 92vh
+    max-height: 100%
     overflow: hidden
     background-color: $dark
     color: $snow
 
     display: grid
     grid-template-columns: max-content auto
-    // grid-template-rows: 1fr
+    grid-template-rows: 1fr
 
     &--sidebar
       margin: 50 0
@@ -106,16 +106,14 @@
               // background-color: $red
               color: white
 
-
-
     &--content
       overflow: hidden
       position: relative
       left: 15
       & > div
+        max-height: 100%
         overflow: auto
         box-sizing: border-box
-        max-height: 100%
         display: flex
         flex-flow: column
         padding-top: 50
@@ -269,6 +267,7 @@
               img
                 height: 80
                 max-height: 80
+                max-width: 80
                 cursor: pointer
                 border-radius: 100%
               .title
