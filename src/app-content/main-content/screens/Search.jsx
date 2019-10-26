@@ -3,7 +3,8 @@ import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 
 export default props => {
-
+  
+  const {user} = props
   const [searchParams, setSearchParams] = useState({
     type: ['album', 'track', 'artist'],
     limit: 5
@@ -15,8 +16,12 @@ export default props => {
 
   const querySearch = () => {
 
-    const {token} = props
-    const access_token = 'Bearer ' + token.access_token
+    console.log(user)
+    if(!user)
+      return
+
+    const {spotify} = user
+    const access_token = 'Bearer ' + spotify.access_token
     console.log(access_token)
     const {limit, type} = searchParams
     const query = encodeURI(seachQuery.value)
@@ -78,7 +83,6 @@ export default props => {
       <div className="artists">
         <div className="heading">Artists</div>
         {
-
           items.map(item => {
             const {images, name, id} = item
             return (

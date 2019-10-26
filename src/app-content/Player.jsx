@@ -1,15 +1,13 @@
 
 import React, {useState, useEffect} from 'react'
-import Script from 'react-load-script'
-
-const uToken = 'BQAbpTiqd0AVGIXRbMis_rwQtCDTQwWja4DOKuMW5LrEJ7sNFdSYtM1eeyVYnqUEE3NZ32Ub5Z9vlJB28rDf_2MfjJZve-4vc4m0Z-kn7YAQ5AD86SWg7gxv-y9OQxkpfcieFoTnsFt6VQ3IH5RkmmEsK2JrqLI'
-// const qToken = 'BQBPsWDo0B9V_p8TOfYOUrfOD4TGZpYUFgXwSUaHTVZ80o6guju3l01bYloqLppzf3O8uLYOqd4is_sguNPWLe2cN5ywx1z2wZRMaA5ADVEZwWJBlPPVybQQVrDqpMMLUY8sxFyB5DPgIOgxkOnohZnbrdB2Jyw'
+import Axios from 'axios'
 
 export default props => {
 
   const {playingNow, user} = props
   const [fullscreen, setFullscreen] = useState(false)
   const [title, setTitle] = useState(playingNow.name)
+  let player = false
 
   useEffect(() => {
 
@@ -21,59 +19,36 @@ export default props => {
 
   }, [playingNow, fullscreen])
 
-  useEffect(() => {
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      handleLoadSuccess()
+  const play = uri => {
+
+    console.log(uri)
+    if(player) {
+      const data = {
+        context_uri: uri,
+      }
+      const token = 'Bearer ' + user.spotify.access_token
+      console.log(token)
+      Axios.put('https://api.spotify.com/v1/me/player/play', data, {
+        headers: {
+          Authorization: token
+        }})
+        .then(res => console.log(res.data))
+        .catch(err => console.log(err.response.data))
     }
-  }, [])
-
-  const cb = token => token
-
-  const handleLoadSuccess = () => {
-    const token = uToken
-    const player = new window.Spotify.Player({
-      name: 'Web Playback SDK Quick Start Player',
-      getOAuthToken: cb => { cb(token); }
-    });
-    console.log(player);
-
-    // Error handling
-    player.addListener('initialization_error', ({ message }) => { console.error(message); });
-    player.addListener('authentication_error', ({ message }) => { console.error(message); });
-    player.addListener('account_error', ({ message }) => { console.error(message); });
-    player.addListener('playback_error', ({ message }) => { console.error(message); });
-
-    // Playback status updates
-    player.addListener('player_state_changed', state => { console.log(state); });
-
-    // Ready
-    player.addListener('ready', ({ device_id }) => {
-      console.log('Ready with Device ID', device_id);
-    });
-
-    // Not Ready
-    player.addListener('not_ready', ({ device_id }) => {
-      console.log('Device ID has gone offline', device_id);
-    });
-
-    // Connect to the player!
-    player.connect();
   }
 
   const renderPlayer = () => {
 
     return (
-      false ?
       <div className="music-player">
         <div className="play-options">
           <img className='prev-song' src={require('../assets/images/previous.svg')} alt="<"/>
-          <img className='play-song' src={require('../assets/images/play.svg')} alt="D"/>
+          <img className='play-song' src={require('../assets/images/play.svg')} alt="D"
+            onClick={() => play('spotify:track:4iV5W9uYEdYUVa79Axb7Rh')} />
           <img className='next-song' src={require('../assets/images/next.svg')} alt=">"/>
         </div>
         <div className="duration"></div>
       </div>
-      :
-      <Script url="https://sdk.scdn.co/spotify-player.js" />
     )
   }
   

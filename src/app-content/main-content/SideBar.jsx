@@ -1,5 +1,8 @@
 
 import React, { Component } from 'react'
+import SVG from 'react-inlinesvg'
+import SpotifyIcon from '../../assets/images/spotify.svg'
+import YoutubeIcon from '../../assets/images/youtube.svg'
 
 export default class SideBar extends Component {
 
@@ -8,6 +11,7 @@ export default class SideBar extends Component {
 
     this.state = {
     }
+    // console.log(<SpotifyIcon/>)
   }
 
   renderLoginScreen = () => {
@@ -30,9 +34,18 @@ export default class SideBar extends Component {
   renderSidebarOptions = () => {
     
     const {screen} = this.props
+    const [musicProvider, updateMusicProvider] = this.props.musicProvider
     const [selectedScreen, updateScreen] = screen
+    const spotifyClass = 'spotify' + (musicProvider !== 'spotify' ? ' disabled' : '')
+    const youtubeClass = 'youtube' + (musicProvider !== 'youtube' ? ' disabled' : '')
     return (
       <div className="sidebar--options">
+        <div className="music-providers">
+          <SVG src={SpotifyIcon} className={spotifyClass}
+            onClick={() => updateMusicProvider('spotify')} />
+          <SVG src={YoutubeIcon} className={youtubeClass}
+            onClick={() => updateMusicProvider('youtube')} />
+        </div>
         <div className="options">
           <div className={`option ${selectedScreen === 'discover' ? 'selected' : ''}`}
             onClick={() => updateScreen('discover')} >Discover</div>

@@ -30,21 +30,22 @@ export default class Main extends Component {
   
   render() {
 
-    const {token, getSpotifyCode} = this.props
+    const {getSpotifyCode} = this.props
     const [user, updateUser] = this.props.user
+    const [musicProvider, updateMusicProvider] = this.props.musicProvider
     const [playingNow, updatePlayingNow] = this.props.playingNow
     const {selectedScreen, showAuthScreen} = this.state
-    console.log(showAuthScreen)
   
     return (
       <div className='main' >
         <SideBar
+          musicProvider={[musicProvider, updateMusicProvider]}
           authScreen={[showAuthScreen, this.updateAuthScreen]}
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
         <Content
+          musicProvider={[musicProvider, updateMusicProvider]}
           playingNow={[playingNow, updatePlayingNow]}
-          token={token}
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
         {

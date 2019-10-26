@@ -20,7 +20,7 @@ export default class Content extends Component {
   
   render() {
 
-    const {token} = this.props
+    const [musicProvider, updateMusicProvider] = this.props.musicProvider
     const [playingNow, updatePlayingNow] = this.props.playingNow
     const [selectedScreen, updateScreen] = this.props.screen
     const {searchResults} = this.state
@@ -36,9 +36,10 @@ export default class Content extends Component {
           <Playlist />
           : selectedScreen === 'search' ?
           <Search
+            musicProvider={[musicProvider, updateMusicProvider]}
+            user={this.props.user}
             searchResults={[searchResults, this.updateSearchResults]}
-            playingNow={[playingNow, updatePlayingNow]}
-            token={token} />
+            playingNow={[playingNow, updatePlayingNow]} />
           : null
         }
       </div>

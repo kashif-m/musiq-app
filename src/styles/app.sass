@@ -87,6 +87,18 @@
             weight: 900
 
       .sidebar--options
+        .music-providers
+          display: grid
+          grid-template-columns: 1fr 1fr
+          padding: 20
+          svg
+            cursor: pointer
+            margin: 0 20
+            height: 50px
+            width: 50px
+            &.disabled
+              & > g > path:first-child
+                fill: gray
         .options
           font:
             family: GothamMedium

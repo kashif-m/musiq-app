@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import queryString from 'query-string'
+import Script from 'react-load-script'
 
 import Header from './app-content/Header.jsx'
 import Main from './app-content/Main.jsx'
@@ -13,7 +14,8 @@ export default class App extends Component {
 
   state = {
     user: false,
-    playingNow: false
+    playingNow: false,
+    musicProvider: 'spotify'
   }
 
   componentDidMount() {
@@ -28,10 +30,14 @@ export default class App extends Component {
         localStorage.removeItem('musiq__user')
       }
 
-    if(user && !user.code)
+    if(user && !user.spotify)
       this.getSpotifyCode(user)
     else if(user)
       this.setState({user})
+
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      this.handleLoadSuccess()
+    }  
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -40,43 +46,83 @@ export default class App extends Component {
       if(Object.keys(this.state.user).length > 0) {
         this.saveUser(this.state.user)
         if(Object.keys(queryString.parseUrl(window.location.href).query).length > 0)
-          window.location.href = 'http://localhost:8080'
+          window.location.href = redirectURI.dev
       }
       else
         localStorage.removeItem('musiq__user')
   }
 
-  getSpotifyCode = user => {
+  getSpotifyCode = async (user) => {
 
     const {query} = queryString.parseUrl(window.location.href)
 
-    if(!query.code)
-      return window.location.replace(`https://accounts.spotify.com/authorize?client_id=${spotify.clientID}&response_type=code&redirect_uri=${redirectURI.dev}`)
+    if(!query.code) {
+      const scopes = encodeURI(["streaming", "user-read-email", "user-read-private", "user-modify-playback-state"].join(' '))
+      return window.location.replace(`https://accounts.spotify.com/authorize?client_id=${spotify.clientID}&response_type=code&redirect_uri=${redirectURI.dev}&scope=${scopes}`)
+    }
 
-    user.code = query.code
+    const res = await axios.post('http://localhost:5000/token', {code: query.code})
+    user.spotify = res.data
+    user.spotify.code = query.code
     this.setState({user})
+  }
+
+  handleLoadSuccess = () => {
+
+    const {user} = this.state
+    const token = user.spotify.access_token
+
+    const player = new window.Spotify.Player({
+      name: 'musiq player',
+      getOAuthToken: cb => { cb(token) }
+    })
+    console.log(player)
+
+    // Error handling
+    player.addListener('initialization_error', ({ message }) => { console.error(message) })
+    player.addListener('authentication_error', ({ message }) => { console.error(message) })
+    player.addListener('account_error', ({ message }) => { console.error(message) })
+    player.addListener('playback_error', ({ message }) => { console.error(message) })
+
+    // Playback status updates
+    player.addListener('player_state_changed', state => { console.log(state) })
+
+    // Ready
+    player.addListener('ready', ({ device_id }) => {
+      console.log('Ready with Device ID', device_id)
+    })
+
+    // Not Ready
+    player.addListener('not_ready', ({ device_id }) => {
+      console.log('Device ID has gone offline', device_id)
+    })
+
+    // Connect to the player!
+    player.connect()
   }
 
   saveUser = user => localStorage.setItem('musiq__user', JSON.stringify(user))
   updateUser = user => this.setState({user})
   updatePlayingNow = song => this.setState({playingNow: song})
+  updateMusicProvider = musicProvider => this.setState({musicProvider})
 
   render() {
 
-    const {user, playingNow, token} = this.state
+    const {user, playingNow, musicProvider} = this.state
     return (
       <div className='app' >
+        <Script url="https://sdk.scdn.co/spotify-player.js" />
         <Header
           user={user} />
         <Main
+          musicProvider={[musicProvider, this.updateMusicProvider]}
           getSpotifyCode={this.getSpotifyCode}
           playingNow={[playingNow, this.updatePlayingNow]}
-          token={token}
           user={[user, this.updateUser]} />
         {
           playingNow ?
           <Player
-            token={token}
+            musicProvider={[musicProvider, this.updateMusicProvider]}
             playingNow={playingNow}
             user={user} />
           : null

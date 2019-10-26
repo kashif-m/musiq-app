@@ -31,8 +31,12 @@ module.exports = {
         use: ['style-loader', MiniCSSExtractPlugin.loader, 'css-loader', 'sass-loader']
       },
       {
-        test: /.(ttf|otf|svg)/,
+        test: /.(ttf|otf)/,
         use: 'file-loader'
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
       }
     ]
   },
