@@ -22,12 +22,10 @@
       font:
         family: CabinRegular
         size: 25
-        // weight: 900
       display: flex
       align-items: center
 
-      img
-        height: 40
+      svg
         margin-right: 15
 
     &--account
@@ -222,7 +220,7 @@
               &::placeholder
                 color: #444444
 
-          img
+          svg
             height: 20
             cursor: pointer
             position: relative
@@ -322,7 +320,7 @@
       grid-column: 2 / 3
       align-self: center
       padding: 10 0
-      margin: 0 30
+      margin: 0 20
       .title
         font-size: 40
       .artist
@@ -346,28 +344,46 @@
       grid-column: 3 / 4
       grid-row: 1 / -1
       background-color: $dark
-      // border: 1px solid white
-      display: flex
-      flex-flow: column
-      align-items: center
+      display: grid
+      grid-template-columns: auto max-content
+      grid-template-rows: max-content auto
       .play-options
+        justify-self: center
         display: flex
         align-items: center
-        & > img
+        & > svg
           cursor: pointer
-        .play-song
+        .play-song, .pause-song
           height: 50
           margin: 0 25
         .prev-song, .next-song
           height: 20
 
-      .duration
+      .seeker
+        grid-column: 1 / 2
+        justify-self: center
         cursor: pointer
         height: 5
-        width: 80%
+        width: 95%
         background-color: white
         margin-top: 15
         border-radius: 100px
+      .duration
+        align-self: center
+        min-width: 150
+        grid-column: 2 / 3
+        grid-row: 2 / 3
+        padding: 0 10
+        display: flex
+        justify-content: center
+        .elapsed
+          text-align: right
+        .elapsed, .total
+          min-width: 50
+          margin: 0 10
+      #music-player
+        height: 0
+        width: 0
 
     &.fullscreen
       position: absolute
@@ -376,7 +392,7 @@
       height: 100vh
       width: 100vw
       padding-top: 100
-      grid-template-columns: max-content auto
+      grid-template-columns: 1fr auto
       grid-template-rows: max-content 1fr max-content
       & > div
         grid-column: 1 / -1
@@ -400,6 +416,7 @@
       .song-options
         grid-row: 2 / 3
         grid-column: 2 / 3
+        max-width: 100%
         align-self: flex-end
         justify-self: flex-end
         padding: 0 50 50 0

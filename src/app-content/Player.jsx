@@ -1,6 +1,16 @@
 
 import React, { Component } from 'react'
 import axios from 'axios'
+import YTPlayer from 'yt-player'
+import SVG from 'react-inlinesvg'
+
+import PlayIcon from '../assets/images/play.svg'
+import PauseIcon from '../assets/images/pause.svg'
+import PreviousIcon from '../assets/images/previous.svg'
+import NextIcon from '../assets/images/next.svg'
+import CloseIcon from '../assets/images/close.svg'
+import SaveIcon from '../assets/images/plus.svg'
+import UpArrowIcon from '../assets/images/up-arrow.svg'
 
 export default class Player extends Component {
 
@@ -10,42 +20,76 @@ export default class Player extends Component {
     const {playingNow} = this.props
     this.state = {
       fullscreen: false,
-      title: ''
+      title: '',
+      trackOptions: {
+        playing: false,
+        duration: 0,
+        paused: false,
+        currentTime: 0
+      }
     }
     this.player = false
   }
 
   componentDidMount() {
+
     this.checkTitle()
+    if(this.props.musicProvider === 'youtube') {
+      const opts = {
+        width: 0,
+        height: 0
+      }
+      this.player = new YTPlayer('#music-player', opts)
+      this.playYoutube(this.props.playingNow.id.videoId)
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
 
-    if(JSON.stringify(prevProps.playingNow) !== JSON.stringify(this.props.playingNow)
-        || prevState.fullscreen !== this.state.fullscreen ) {
+    const playingNowChanged = JSON.stringify(prevProps.playingNow) !== JSON.stringify(this.props.playingNow)
+    if(playingNowChanged)
+      this.play()
+
+    if(prevState.fullscreen !== this.state.fullscreen
+        || playingNowChanged)
       this.checkTitle()
-    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
 
-    if(nextProps.musicProvider !== this.props.musicProvider)
+    if(nextProps.musicProvider !== this.props.musicProvider) {
+      if(nextProps.musicProvider === 'youtube') {
+        this.player = new YTPlayer('#music-player')
+      } else {
+        this.player.destroy()
+        this.player = false
+      }
       return false
+    }
 
     return true
   }
 
+  getMinutes = seconds => {
+
+    const minutes = parseInt(seconds / 60)
+    const sec = parseInt(seconds % 60)
+    return minutes === 0 ? `${sec}s`
+      : sec === 0 ? `${minutes}m`
+      : `${minutes}:${sec}`
+  }
+
   checkTitle = () => {
 
-    
     const {playingNow, musicProvider} = this.props
     const title = musicProvider === 'spotify' ? playingNow.name : playingNow.snippet.title
     if(title.length > 20 && !this.state.fullscreen)
       this.setState({title: title.slice(0, 20) + ' ...'})
     else
-      this.setState({title})  }
+      this.setState({title})
+  }
 
-  play = uri => {
+  playSpotify = uri => {
 
     console.log(uri)
     if(this.player) {
@@ -64,17 +108,64 @@ export default class Player extends Component {
     }
   }
 
+  playYoutube = videoID => {
+
+    this.player.load(videoID)
+    this.player.setVolume(100)
+    this.player.play()
+    this.player.on('playing', () => {
+      const trackOptions = {...this.state.trackOptions}
+      trackOptions.playing = true
+      trackOptions.duration = this.player.getDuration()
+      this.setState({trackOptions})
+      window.setInterval(() => {
+        const trackOptions = {...this.state.trackOptions}
+        trackOptions.currentTime = this.player.getCurrentTime()
+        this.setState({trackOptions})
+      }, 1000)
+    })
+  }
+
+  play = () => {
+
+    const {musicProvider, playingNow} = this.props
+    console.log('un play')
+    console.log(playingNow)
+    if(musicProvider === 'spotify')
+      console.log('play-spotify')
+    else
+      this.playYoutube(playingNow.id.videoId)
+  }
+
   renderPlayer = () => {
+
+    const {playingNow, musicProvider} = this.props
+    const {trackOptions} = this.state
 
     return (
       <div className="music-player">
         <div className="play-options">
-          <img className='prev-song' src={require('../assets/images/previous.svg')} alt="<"/>
-          <img className='play-song' src={require('../assets/images/play.svg')} alt="D"
-            onClick={() => this.play('spotify:track:4iV5W9uYEdYUVa79Axb7Rh')} />
-          <img className='next-song' src={require('../assets/images/next.svg')} alt=">"/>
+          <SVG src={PreviousIcon} className='prev-song' />
+          {
+            trackOptions.playing
+            ? <SVG src={PauseIcon} className='pause-song'
+              onClick={() => {
+                const trackOptions = {...this.state.trackOptions}
+                trackOptions.playing = false
+                trackOptions.paused = true
+                this.setState({trackOptions})
+                this.player.pause()
+              }} />
+            : <SVG src={PlayIcon} className='play-song' onClick={() => this.player.play()} />
+          }
+          <SVG src={NextIcon} className='next-song' />
         </div>
-        <div className="duration"></div>
+        <div className="seeker"></div>
+        <div className="duration">
+          <div className="elapsed">{this.getMinutes(trackOptions.currentTime)}</div> /
+          <div className="total">{this.getMinutes(trackOptions.duration)}</div>
+        </div>
+        <div id="music-player"></div>
       </div>
     )
   }
@@ -121,8 +212,7 @@ export default class Player extends Component {
     return (
       <div className={`player${fullscreen ? ' fullscreen' : ''}`} >
         {
-          fullscreen && <img className='close'
-            src={require('../assets/images/close.svg')} alt="x"
+          fullscreen && <SVG src={CloseIcon} className='close'
             onClick={() => this.setState({fullscreen: false})} />
         }
         {
@@ -131,11 +221,10 @@ export default class Player extends Component {
           : this.renderYoutubeDetails()
         }
         <div className="song-options">
-          <img src={require('../assets/images/plus.svg')} alt="+"
-            className='save' />
+          <SVG src={SaveIcon} className='save' />
           {
             !fullscreen ?
-            <img src={require('../assets/images/up-arrow.svg')} alt="^"
+            <SVG src={UpArrowIcon}
               className='fullscreen'
               onClick={() => this.setState({fullscreen: !fullscreen})} />
             : null

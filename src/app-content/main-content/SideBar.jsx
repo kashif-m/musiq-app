@@ -6,14 +6,6 @@ import YoutubeIcon from '../../assets/images/youtube.svg'
 
 export default class SideBar extends Component {
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-    }
-    // console.log(<SpotifyIcon/>)
-  }
-
   renderLoginScreen = () => {
 
     const [showAuthScreen, updateAuthScreen] = this.props.authScreen
@@ -66,10 +58,9 @@ export default class SideBar extends Component {
     return (
       <div className='main--sidebar' >
         {
-          !user ?
-          this.renderLoginScreen()
-          :
-          this.renderSidebarOptions()
+          !user
+          ? this.renderLoginScreen()
+          : this.renderSidebarOptions()
         }
       </div>
     )

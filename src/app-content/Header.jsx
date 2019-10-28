@@ -1,6 +1,7 @@
 
 import React from 'react'
-import axios from 'axios'
+import SVG from 'react-inlinesvg'
+import Avatar from '../assets/images/avatar.svg'
 
 export default props => {
 
@@ -8,7 +9,7 @@ export default props => {
 
   const renderUserBox = () => (
     <div className="user-box">
-      <img src={require('../assets/images/avatar.svg')} alt="img"/>
+      <SVG src={Avatar} height={40} />
       <div className="username">{user.username}</div>
     </div>
   )

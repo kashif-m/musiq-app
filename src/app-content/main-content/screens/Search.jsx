@@ -1,6 +1,9 @@
 
 import React, {useState, useEffect} from 'react'
+import SVG from 'react-inlinesvg'
 import axios from 'axios'
+
+import SearchIcon from '../../../assets/images/search.svg'
 
 import {youtubeAPI} from '../../../config/keys'
 
@@ -62,8 +65,7 @@ export default props => {
         // defaultValue={searchResults ?
           // new URL(searchResults[Object.keys(searchResults)[0]].href).searchParams.get('query') : null}
         onKeyPress={key => key.charCode === 13 ? querySearch() : null} />
-      <img src={require('../../../assets/images/search.svg')} alt="search"
-        onClick={() => querySearch()} />
+      <SVG src={SearchIcon} onClick={() => querySearch()} />
     </div>
   )
 
@@ -78,7 +80,6 @@ export default props => {
           items.map(item => {
             const {artists, name, id, album} = item
             const {images} = album
-            console.log(item)
             return (
               <div className="track" key={id} >
                 <img src={images.length > 0 ? images[2].url : null} alt="ti"
@@ -161,7 +162,6 @@ export default props => {
           items.map(item => {
             const {snippet} = item
             const {channelTitle, title, thumbnails} = snippet
-            console.log(item)
             return (
               <div className="track" key={item.etag} >
                 <img src={thumbnails.medium.url} alt="i"
