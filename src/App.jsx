@@ -15,7 +15,7 @@ export default class App extends Component {
   state = {
     user: false,
     playingNow: false,
-    musicProvider: 'spotify'
+    musicProvider: 'youtube'
   }
 
   componentDidMount() {
@@ -36,8 +36,15 @@ export default class App extends Component {
       this.setState({user})
 
     window.onSpotifyWebPlaybackSDKReady = () => {
-      this.handleLoadSuccess()
-    }  
+
+      if(!user)
+        return
+      const {spotify} = this.state.user
+      if((spotify.timestamp + (spotify.expires_in * 1000)) > new Date().getTime())
+        this.handleLoadSuccess()
+      else
+        this.updateSpotifyCode(this.state.user)
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -50,9 +57,12 @@ export default class App extends Component {
       }
       else
         localStorage.removeItem('musiq__user')
+
+    if(prevState.musicProvider !== this.state.musicProvider)
+      this.setState({playingNow: false})
   }
 
-  getSpotifyCode = async (user) => {
+  getSpotifyCode = async user => {
 
     const {query} = queryString.parseUrl(window.location.href)
 
@@ -61,10 +71,36 @@ export default class App extends Component {
       return window.location.replace(`https://accounts.spotify.com/authorize?client_id=${spotify.clientID}&response_type=code&redirect_uri=${redirectURI.dev}&scope=${scopes}`)
     }
 
-    const res = await axios.post('http://localhost:5000/token', {code: query.code})
-    user.spotify = res.data
-    user.spotify.code = query.code
-    this.setState({user})
+    const data = {
+      code: query.code,
+      grant_type: 'authorization_code'
+    }
+    const res = await axios.post('http://localhost:5000/token', data)
+    if(!res.data.error) {
+      user.spotify = res.data
+      user.spotify.code = query.code
+      user.spotify.timestamp = new Date().getTime()
+      this.setState({user})
+    } else
+      this.updateSpotifyCode(user)
+  }
+
+  updateSpotifyCode = async user => {
+
+    console.log(user)
+    const data = {
+      refresh_token: user.spotify.refresh_token,
+      grant_type: 'refresh_token'
+    }
+    const res = await axios.post('http://localhost:5000/token', data)
+    if(!res.data.error) {
+
+      user.spotify = res.data
+      user.spotify.code = res.data.code
+      user.spotify.timestamp = new Date().getTime()
+      this.saveUser(user)
+      this.setState({user})
+    } else console.log(res.data)
   }
 
   handleLoadSuccess = () => {
@@ -76,11 +112,11 @@ export default class App extends Component {
       name: 'musiq player',
       getOAuthToken: cb => { cb(token) }
     })
-    console.log(player)
+    // console.log(player)
 
     // Error handling
     player.addListener('initialization_error', ({ message }) => { console.error(message) })
-    player.addListener('authentication_error', ({ message }) => { console.error(message) })
+    player.addListener('authentication_error', ({ message }) => { console.error(message); console.log('dsg') })
     player.addListener('account_error', ({ message }) => { console.error(message) })
     player.addListener('playback_error', ({ message }) => { console.error(message) })
 
@@ -122,7 +158,7 @@ export default class App extends Component {
         {
           playingNow ?
           <Player
-            musicProvider={[musicProvider, this.updateMusicProvider]}
+            musicProvider={musicProvider}
             playingNow={playingNow}
             user={user} />
           : null

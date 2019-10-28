@@ -199,6 +199,7 @@
           border-radius: 100px
 
       .search
+        padding-right: 50
         &-box
           input
             cursor: default
@@ -235,6 +236,7 @@
           flex-flow: column
           margin: 30 0
           padding-left: 20
+          overflow-x: hidden
           & > div
             margin-bottom: 50
             font:
@@ -245,7 +247,6 @@
               margin-bottom: 10
 
             .track, .artist, .album
-              width: max-content
               display: grid
               grid-template-columns: max-content auto
               grid-template-rows: auto max-content
@@ -256,6 +257,9 @@
               justify-self: flex-start
               margin: 10
               img
+                max-width: 80
+                height: 80
+                border-radius: 100px
                 cursor: pointer
               .title
                 cursor: pointer

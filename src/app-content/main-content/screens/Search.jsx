@@ -2,27 +2,46 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 
+import {youtubeAPI} from '../../../config/keys'
+
 export default props => {
   
-  const {user} = props
+  const {user, musicProvider} = props
   const [searchParams, setSearchParams] = useState({
     type: ['album', 'track', 'artist'],
     limit: 5
   })
-  const [searchResults, setSearchResults] = props.searchResults
+  const [searchResults, updateSearchResults] = props.searchResults
   let seachQuery = {}
 
   const [playingNow, updatePlayingNow] = props.playingNow
 
   const querySearch = () => {
 
-    console.log(user)
     if(!user)
       return
 
+    if(musicProvider === 'spotify')
+      spotifySearch()
+    else
+      youtubeSearch()
+  }
+
+  const youtubeSearch = () => {
+
+    const query = encodeURI(seachQuery.value)
+    const type = 'video'
+    const regionCode = 'US'
+    const videoLicense = 'youtube'
+    axios.get(`https://www.googleapis.com/youtube/v3/search?key=${youtubeAPI}&part=snippet&q=${query}&type=${type}&videoLicense=${videoLicense}&regionCode=${regionCode}`)
+      .then(res => updateSearchResults(res.data))
+      .catch(err => updateSearchResults(false))
+  }
+
+  const spotifySearch = () => {
+
     const {spotify} = user
     const access_token = 'Bearer ' + spotify.access_token
-    console.log(access_token)
     const {limit, type} = searchParams
     const query = encodeURI(seachQuery.value)
     axios.get(`https://api.spotify.com/v1/search?q=${query}&type=${type.join(',')}&limit=${limit}`,
@@ -30,8 +49,8 @@ export default props => {
       .then(res => {
         console.log(res.data)
         Object.keys(res.data).length > 0
-        ? setSearchResults(res.data)
-        : setSearchResults(false)
+        ? updateSearchResults(res.data)
+        : updateSearchResults(false)
       })
       .catch(err => console.log(err.response))
   }
@@ -40,15 +59,15 @@ export default props => {
     <div className="search-box">
       <input type="text" placeholder='Search ...'
         ref={node => seachQuery = node}
-        defaultValue={searchResults ? 
-          new URL(searchResults[Object.keys(searchResults)[0]].href).searchParams.get('query') : null}
+        // defaultValue={searchResults ?
+          // new URL(searchResults[Object.keys(searchResults)[0]].href).searchParams.get('query') : null}
         onKeyPress={key => key.charCode === 13 ? querySearch() : null} />
       <img src={require('../../../assets/images/search.svg')} alt="search"
         onClick={() => querySearch()} />
     </div>
   )
 
-  const renderTracks = tracks => {
+  const renderSpotifyTracks = tracks => {
     
     const {items} = tracks
 
@@ -75,7 +94,7 @@ export default props => {
     )
   }
 
-  const renderArtists = artists => {
+  const renderSpotifyArtists = artists => {
 
     const {items} = artists
 
@@ -97,7 +116,7 @@ export default props => {
     )
   }
 
-  const renderAlbums = albums => {
+  const renderSpotifyAlbums = albums => {
 
     const {items} = albums
     
@@ -120,19 +139,49 @@ export default props => {
     )
   }
 
-  const renderSearchResults = () => {
+  const renderSpotifySearchResults = () => {
 
     let {albums, artists, tracks} = searchResults
-    localStorage.setItem('items', JSON.stringify(searchResults))
 
     return (
-      <div className="search-results">
-        {tracks.items.length > 0 && renderTracks(tracks)}
-        {albums.items.length > 0 && renderAlbums(albums)}
-        {artists.items.length > 0 && renderArtists(artists)}
+      <React.Fragment>
+        {tracks.items.length > 0 && renderSpotifyTracks(tracks)}
+        {albums.items.length > 0 && renderSpotifyAlbums(albums)}
+        {artists.items.length > 0 && renderSpotifyArtists(artists)}
+      </React.Fragment>
+    )
+  }
+
+  const renderYoutubeSearchResults = () => {
+    
+    let {items} = searchResults
+    return (
+      <div className="tracks">
+        {
+          items.map(item => {
+            const {snippet} = item
+            const {channelTitle, title, thumbnails} = snippet
+            console.log(item)
+            return (
+              <div className="track" key={item.etag} >
+                <img src={thumbnails.medium.url} alt="i"
+                  onClick={() => updatePlayingNow(item)} />
+                <div className="title"
+                  onClick={() => updatePlayingNow(item)} >{title}</div>
+                <div className="artist">{channelTitle}</div>
+              </div>
+            )
+          })
+        }
       </div>
     )
   }
+
+  const renderSearchResults = () => (
+    <div className="search-results">
+      {musicProvider === 'spotify' ? renderSpotifySearchResults() : renderYoutubeSearchResults()}
+    </div>
+  )
   
   return (
     <div className="search">

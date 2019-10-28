@@ -16,14 +16,22 @@ export default class Content extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    
+    if(this.props.musicProvider !== nextProps.musicProvider) {
+      this.setState({searchResults: false})
+      return false
+    }
+    return true
+  }
+
   updateSearchResults = searchResults => this.setState({searchResults})
-  
+
   render() {
 
     const [musicProvider, updateMusicProvider] = this.props.musicProvider
     const [playingNow, updatePlayingNow] = this.props.playingNow
     const [selectedScreen, updateScreen] = this.props.screen
-    const {searchResults} = this.state
   
     return (
       <div className='main--content' >
@@ -36,9 +44,9 @@ export default class Content extends Component {
           <Playlist />
           : selectedScreen === 'search' ?
           <Search
-            musicProvider={[musicProvider, updateMusicProvider]}
+            searchResults={[this.state.searchResults, this.updateSearchResults]}
+            musicProvider={musicProvider}
             user={this.props.user}
-            searchResults={[searchResults, this.updateSearchResults]}
             playingNow={[playingNow, updatePlayingNow]} />
           : null
         }
