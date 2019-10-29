@@ -362,12 +362,17 @@
       .seeker
         grid-column: 1 / 2
         justify-self: center
+        align-self: center
         cursor: pointer
         height: 5
-        width: 95%
+        box-sizing: border-box
+        width: calc(100% - 40px)
         background-color: white
-        margin-top: 15
         border-radius: 100px
+        .tracker
+          background-color: $red
+          height: 5
+          border-radius: 2px
       .duration
         align-self: center
         min-width: 150

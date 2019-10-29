@@ -33,6 +33,7 @@ export default class Player extends Component {
 
   componentDidMount() {
 
+    console.log(this.props.user)
     this.checkTitle()
     if(this.props.musicProvider === 'youtube') {
       const opts = {
@@ -118,23 +119,44 @@ export default class Player extends Component {
       trackOptions.playing = true
       trackOptions.duration = this.player.getDuration()
       this.setState({trackOptions})
-      window.setInterval(() => {
-        const trackOptions = {...this.state.trackOptions}
-        trackOptions.currentTime = this.player.getCurrentTime()
-        this.setState({trackOptions})
-      }, 1000)
+    })
+
+    this.player.on('timeupdate', seconds => {
+
+      const trackOptions = {...this.state.trackOptions}
+      trackOptions.currentTime = seconds
+      this.setState({trackOptions})
+    })
+
+    this.player.on('ended', () => {
+
+      const trackOptions = {...this.state.trackOptions}
+      trackOptions.playing = false
+      this.setState({trackOptions})
     })
   }
 
   play = () => {
 
     const {musicProvider, playingNow} = this.props
-    console.log('un play')
-    console.log(playingNow)
     if(musicProvider === 'spotify')
       console.log('play-spotify')
     else
       this.playYoutube(playingNow.id.videoId)
+  }
+
+  saveSong = () => {
+
+    const {user, musicProvider, playingNow} = this.props
+
+    const data = {
+      musicProvider,
+      songDetails: playingNow
+    }
+
+    axios.post('http://localhost:5000/user-data/like', data, {headers: {Authorization: user.token}})
+      .then(res => console.log(res.data))
+      .catch(err => console.log(err.response))
   }
 
   renderPlayer = () => {
@@ -148,7 +170,8 @@ export default class Player extends Component {
           <SVG src={PreviousIcon} className='prev-song' />
           {
             trackOptions.playing
-            ? <SVG src={PauseIcon} className='pause-song'
+            ?
+            <SVG src={PauseIcon} className='pause-song'
               onClick={() => {
                 const trackOptions = {...this.state.trackOptions}
                 trackOptions.playing = false
@@ -160,7 +183,30 @@ export default class Player extends Component {
           }
           <SVG src={NextIcon} className='next-song' />
         </div>
-        <div className="seeker"></div>
+        <div className="seeker"
+          onClick={(event) => {
+            let start, end
+            if(this.state.fullscreen) {
+              start = 20
+              end = event.target.clientWidth + start
+            } else {
+              const trackWidth = document.getElementById('track-cover').clientWidth
+              const detailsWidth = document.getElementById('song-details').clientWidth + 40
+              start = trackWidth + detailsWidth + 20
+              end = start + event.target.clientWidth
+            }
+            const perc = this.mapValue(event.clientX, start, end, 0, 100)
+            this.player.seek(perc * trackOptions.duration / 100)
+          }} >
+            <div className="tracker"
+              style={
+                this.player ?
+                {
+                  width: `${this.mapValue(this.player.getCurrentTime(), 0, trackOptions.duration, 0, 100)}%`
+                }
+                : {}
+              } ></div>
+        </div>
         <div className="duration">
           <div className="elapsed">{this.getMinutes(trackOptions.currentTime)}</div> /
           <div className="total">{this.getMinutes(trackOptions.duration)}</div>
@@ -176,9 +222,9 @@ export default class Player extends Component {
 
     return (
       <React.Fragment>
-        <img className='track-cover' alt=''
+        <img className='track-cover' alt='' id='track-cover'
           src={this.state.fullscreen ? playingNow.album.images[0].url : playingNow.album.images[1].url} />
-        <div className="song-details">
+        <div className="song-details" id='song-details' >
           <div className="title">{this.state.title}</div>
           <div className="artist">{playingNow.artists[0].name}</div>
         </div>
@@ -194,15 +240,17 @@ export default class Player extends Component {
     return (
 
       <React.Fragment>
-        <img alt="" className="track-cover"
+        <img alt="" className="track-cover" id='track-cover'
           src={this.state.fullscreen ? thumbnails.high.url : thumbnails.medium.url} />
-        <div className="song-details">
+        <div className="song-details" id='song-details' >
           <div className="title">{this.state.title}</div>
           <div className="artist">{channelTitle}</div>
         </div>
       </React.Fragment>
     )
   }
+
+  mapValue = (value, fromLow, fromHigh, toLow, toHigh) => (toLow + (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow))
 
   render() {
 
@@ -221,7 +269,8 @@ export default class Player extends Component {
           : this.renderYoutubeDetails()
         }
         <div className="song-options">
-          <SVG src={SaveIcon} className='save' />
+          <SVG src={SaveIcon} className='save'
+            onClick={() => this.saveSong()} />
           {
             !fullscreen ?
             <SVG src={UpArrowIcon}

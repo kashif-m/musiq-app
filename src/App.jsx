@@ -94,7 +94,7 @@ export default class App extends Component {
     }
     const res = await axios.post('http://localhost:5000/token', data)
     if(!res.data.error) {
-
+      res.data = user.spotify.refresh_token
       user.spotify = res.data
       user.spotify.code = res.data.code
       user.spotify.timestamp = new Date().getTime()
