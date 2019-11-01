@@ -19,7 +19,7 @@ export default class Player extends Component {
 
     const {playingNow} = this.props
     this.state = {
-      fullscreen: false,
+      fullscreen: true,
       title: '',
       trackOptions: {
         playing: false,
@@ -238,7 +238,6 @@ export default class Player extends Component {
     const {thumbnails, channelTitle} = snippet
 
     return (
-
       <React.Fragment>
         <img alt="" className="track-cover" id='track-cover'
           src={this.state.fullscreen ? thumbnails.high.url : thumbnails.medium.url} />
@@ -250,6 +249,25 @@ export default class Player extends Component {
     )
   }
 
+  renderButtons = () => (
+    <div className="fullscreen-buttons">
+      <SVG src={CloseIcon} className='close'
+        onClick={() => this.setState({fullscreen: false})} />
+      <div className="save-song">+ Save</div>
+      <div className="add-to-playlist">Add To Playlist</div>
+    </div>
+  )
+
+  renderSongOptions = () => (
+    <div className="song-options">
+      <SVG src={SaveIcon} className='save'
+        onClick={() => this.saveSong()} />
+      <SVG src={UpArrowIcon}
+        className='fullscreen'
+        onClick={() => this.setState({fullscreen: !this.state.fullscreen})} />
+    </div>
+  )
+
   mapValue = (value, fromLow, fromHigh, toLow, toHigh) => (toLow + (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow))
 
   render() {
@@ -259,26 +277,12 @@ export default class Player extends Component {
 
     return (
       <div className={`player${fullscreen ? ' fullscreen' : ''}`} >
-        {
-          fullscreen && <SVG src={CloseIcon} className='close'
-            onClick={() => this.setState({fullscreen: false})} />
-        }
+        { fullscreen ? this.renderButtons() : this.renderSongOptions() }
         {
           musicProvider === 'spotify'
           ? this.renderSpotifyDetails()
           : this.renderYoutubeDetails()
         }
-        <div className="song-options">
-          <SVG src={SaveIcon} className='save'
-            onClick={() => this.saveSong()} />
-          {
-            !fullscreen ?
-            <SVG src={UpArrowIcon}
-              className='fullscreen'
-              onClick={() => this.setState({fullscreen: !fullscreen})} />
-            : null
-          }
-        </div>
         {this.renderPlayer()}
       </div>
     )
