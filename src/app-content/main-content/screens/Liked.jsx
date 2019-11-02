@@ -7,9 +7,8 @@ import YoutubeIcon from '../../../assets/images/youtube.svg'
 
 export default props => {
 
-  const {likedSongs} = props
+  const {likedSongs, updateSongsInQueue} = props
   const [playingNow, updatePlayingNow] = props.playingNow
-  console.log(likedSongs)
 
   const renderSongList = () => {
     return (
@@ -37,7 +36,7 @@ export default props => {
   const renderPlayButtons = () => (
     <div className="play-buttons">
       <div className="play"
-        onClick={null} >Play</div>
+        onClick={() => updateSongsInQueue(likedSongs.map(song => song.data).reverse())} >Play</div>
       <div className="shuffle">Shuffle Play</div>
     </div>
   )

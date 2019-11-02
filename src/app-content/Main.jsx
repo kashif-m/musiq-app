@@ -45,7 +45,7 @@ export default class Main extends Component {
   
   render() {
 
-    const {getSpotifyCode} = this.props
+    const {getSpotifyCode, updateSongsInQueue} = this.props
     const [user, updateUser] = this.props.user
     const [musicProvider, updateMusicProvider] = this.props.musicProvider
     const [playingNow, updatePlayingNow] = this.props.playingNow
@@ -59,6 +59,7 @@ export default class Main extends Component {
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
         <Content
+          updateSongsInQueue={updateSongsInQueue}
           musicProvider={[musicProvider, updateMusicProvider]}
           playingNow={[playingNow, updatePlayingNow]}
           screen={[selectedScreen, this.updateScreen]}

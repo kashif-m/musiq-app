@@ -15,7 +15,12 @@ export default class App extends Component {
   state = {
     user: false,
     playingNow: false,
-    musicProvider: 'youtube'
+    musicProvider: 'youtube',
+    queue: {
+      current: 0,
+      playing: false,
+      songs: []
+    }
   }
 
   componentDidMount() {
@@ -141,16 +146,26 @@ export default class App extends Component {
   updateUser = user => this.setState({user})
   updatePlayingNow = song => this.setState({playingNow: song})
   updateMusicProvider = musicProvider => this.setState({musicProvider})
+  updateQueue = queue => this.setState({queue})
+  updateSongsInQueue = songs => {
+    const temp = {...this.state.queue}
+    temp.playing = true
+    temp.songs = songs
+    temp.current = 0
+    this.setState({queue: temp})
+    this.updatePlayingNow(temp.songs[0])
+  }
 
   render() {
 
-    const {user, playingNow, musicProvider} = this.state
+    const {user, playingNow, musicProvider, queue} = this.state
     return (
       <div className='app' >
         <Script url="https://sdk.scdn.co/spotify-player.js" />
         <Header
           user={user} />
         <Main
+          updateSongsInQueue={this.updateSongsInQueue}
           musicProvider={[musicProvider, this.updateMusicProvider]}
           getSpotifyCode={this.getSpotifyCode}
           playingNow={[playingNow, this.updatePlayingNow]}
@@ -158,8 +173,10 @@ export default class App extends Component {
         {
           playingNow ?
           <Player
+            queue={[queue, this.updateQueue]}
             musicProvider={musicProvider}
             playingNow={playingNow}
+            updatePlayingNow={this.updatePlayingNow}
             user={user}
             updateUser={this.updateUser} />
           : null

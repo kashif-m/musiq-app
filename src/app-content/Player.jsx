@@ -114,6 +114,7 @@ export default class Player extends Component {
     this.player.setVolume(100)
     this.player.play()
     this.player.on('playing', () => {
+
       const trackOptions = {...this.state.trackOptions}
       trackOptions.playing = true
       trackOptions.duration = this.player.getDuration()
@@ -129,9 +130,29 @@ export default class Player extends Component {
 
     this.player.on('ended', () => {
 
-      const trackOptions = {...this.state.trackOptions}
-      trackOptions.playing = false
-      this.setState({trackOptions})
+      const [queue, updateQueue] = this.props.queue
+
+      if(!queue.playing) {
+
+        const trackOptions = {...this.state.trackOptions}
+        trackOptions.playing = false
+        this.setState({trackOptions})
+      } else {
+
+        const temp = {...queue}
+
+        if(temp.current < temp.songs.length - 1)
+          this.changeSong(1)
+
+        else {
+
+          temp.playing = false
+          updateQueue(temp)
+          const trackOptions = {...this.state.trackOptions}
+          trackOptions.playing = false
+          this.setState({trackOptions})  
+        }
+      }
     })
   }
 
@@ -140,8 +161,24 @@ export default class Player extends Component {
     const {musicProvider, playingNow} = this.props
     if(musicProvider === 'spotify')
       console.log('play-spotify')
-    else
-      this.playYoutube(playingNow.id.videoId)
+    else {
+      this.player.load(playingNow.id.videoId)
+      this.player.play()
+    }
+  }
+
+  changeSong = val => {
+    
+    const {updatePlayingNow} = this.props
+    const [queue, updateQueue] = this.props.queue
+    const temp = {...queue}
+
+    if(temp.current + val < temp.songs.length && temp.current + val > 0) {
+
+      temp.current += val
+      updateQueue(temp)
+      updatePlayingNow(temp.songs[temp.current])
+    }
   }
 
   saveSong = () => {
@@ -164,16 +201,17 @@ export default class Player extends Component {
 
   renderPlayer = () => {
 
-    const {playingNow, musicProvider} = this.props
+    const {playingNow, musicProvider, updatePlayingNow} = this.props
+    const [queue, updateQueue] = this.props.queue
     const {trackOptions} = this.state
 
     return (
       <div className="music-player">
         <div className="play-options">
-          <SVG src={PreviousIcon} className='prev-song' />
+          <SVG src={PreviousIcon} className='prev-song'
+            onClick={() => queue.playing ? this.changeSong(-1) : null} />
           {
-            trackOptions.playing
-            ?
+            trackOptions.playing ?
             <SVG src={PauseIcon} className='pause-song'
               onClick={() => {
                 const trackOptions = {...this.state.trackOptions}
@@ -184,7 +222,8 @@ export default class Player extends Component {
               }} />
             : <SVG src={PlayIcon} className='play-song' onClick={() => this.player.play()} />
           }
-          <SVG src={NextIcon} className='next-song' />
+          <SVG src={NextIcon} className='next-song'
+            onClick={() => queue.playing ? this.changeSong(1) : null} />
         </div>
         <div className="seeker"
           onClick={(event) => {

@@ -31,7 +31,7 @@ export default class Content extends Component {
     const [musicProvider, updateMusicProvider] = this.props.musicProvider
     const [playingNow, updatePlayingNow] = this.props.playingNow
     const [selectedScreen, updateScreen] = this.props.screen
-    const {user} = this.props
+    const {user, updateSongsInQueue} = this.props
     const {searchResults} = this.state
   
     return (
@@ -39,6 +39,7 @@ export default class Content extends Component {
         {
           selectedScreen === 'music' ?
           <Liked
+            updateSongsInQueue={updateSongsInQueue}
             likedSongs={user.likedSongs}
             playingNow={[playingNow, updatePlayingNow]} />
           : selectedScreen === 'playlist' ?
