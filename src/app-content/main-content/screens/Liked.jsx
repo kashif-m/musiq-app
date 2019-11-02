@@ -33,11 +33,24 @@ export default props => {
     )
   }
 
+  const shuffle = array => {
+
+    for(let i = array.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * i)
+      const temp = array[i]
+      array[i] = array[j]
+      array[j] = temp
+    }
+
+    return array
+  }
+
   const renderPlayButtons = () => (
     <div className="play-buttons">
       <div className="play"
         onClick={() => updateSongsInQueue(likedSongs.map(song => song.data).reverse())} >Play</div>
-      <div className="shuffle">Shuffle Play</div>
+      <div className="shuffle"
+        onClick={() => updateSongsInQueue(shuffle(likedSongs.map(song => song.data).reverse()))} >Shuffle Play</div>
     </div>
   )
   
