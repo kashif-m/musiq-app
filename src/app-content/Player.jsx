@@ -9,8 +9,8 @@ import PauseIcon from '../assets/images/pause.svg'
 import PreviousIcon from '../assets/images/previous.svg'
 import NextIcon from '../assets/images/next.svg'
 import CloseIcon from '../assets/images/close.svg'
-import SaveIcon from '../assets/images/plus.svg'
-import UpArrowIcon from '../assets/images/up-arrow.svg'
+import SaveIcon from '../assets/images/save.svg'
+import FullScreenIcon from '../assets/images/fullscreen.svg'
 
 export default class Player extends Component {
 
@@ -19,7 +19,7 @@ export default class Player extends Component {
 
     const {playingNow} = this.props
     this.state = {
-      fullscreen: true,
+      fullscreen: false,
       title: '',
       trackOptions: {
         playing: false,
@@ -33,7 +33,6 @@ export default class Player extends Component {
 
   componentDidMount() {
 
-    console.log(this.props.user)
     this.checkTitle()
     if(this.props.musicProvider === 'youtube') {
       const opts = {
@@ -147,7 +146,7 @@ export default class Player extends Component {
 
   saveSong = () => {
 
-    const {user, musicProvider, playingNow} = this.props
+    const {user, musicProvider, playingNow, updateUser} = this.props
 
     const data = {
       musicProvider,
@@ -155,7 +154,11 @@ export default class Player extends Component {
     }
 
     axios.post('http://localhost:5000/user-data/like', data, {headers: {Authorization: user.token}})
-      .then(res => console.log(res.data))
+      .then(res => {
+        const temp = {...user}
+        temp.likedSongs = res.data
+        updateUser(temp)
+      })
       .catch(err => console.log(err.response))
   }
 
@@ -249,20 +252,37 @@ export default class Player extends Component {
     )
   }
 
-  renderButtons = () => (
-    <div className="fullscreen-buttons">
-      <SVG src={CloseIcon} className='close'
-        onClick={() => this.setState({fullscreen: false})} />
-      <div className="save-song">+ Save</div>
-      <div className="add-to-playlist">Add To Playlist</div>
-    </div>
-  )
+  isSaved = () => {
+
+    const {etag} = this.props.playingNow
+    const {likedSongs} = this.props.user
+    
+    return likedSongs.filter(song => song.data.etag === etag).length === 1
+  }
+
+  renderButtons = () => {
+
+    const saved = this.isSaved()
+    return (
+      <div className="fullscreen-buttons">
+        <SVG src={CloseIcon} className='close'
+          onClick={() => this.setState({fullscreen: false})} />
+        <div className={`${saved ? 'remove' : 'save'} button`}
+          onClick={() => this.saveSong()} >
+          {
+            saved ? 'Remove' : '+ Save'
+          }
+        </div>
+        <div className="add-to-playlist">Add To Playlist</div>
+      </div>
+    )
+  }
 
   renderSongOptions = () => (
     <div className="song-options">
-      <SVG src={SaveIcon} className='save'
+      <SVG src={SaveIcon} className={`save${this.isSaved() ? ' saved' : ''}`}
         onClick={() => this.saveSong()} />
-      <SVG src={UpArrowIcon}
+      <SVG src={FullScreenIcon}
         className='fullscreen'
         onClick={() => this.setState({fullscreen: !this.state.fullscreen})} />
     </div>

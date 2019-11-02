@@ -1,6 +1,8 @@
 
 import React, { Component } from 'react'
 import SVG from 'react-inlinesvg'
+
+import FolderIcon from '../../assets/images/folder.svg'
 import SpotifyIcon from '../../assets/images/spotify.svg'
 import YoutubeIcon from '../../assets/images/youtube.svg'
 
@@ -30,6 +32,7 @@ export default class SideBar extends Component {
     const [selectedScreen, updateScreen] = screen
     const spotifyClass = 'spotify' + (musicProvider !== 'spotify' ? ' disabled' : '')
     const youtubeClass = 'youtube' + (musicProvider !== 'youtube' ? ' disabled' : '')
+    const deviceClass = 'device' + (musicProvider !== 'device' ? ' disabled' : '')
     return (
       <div className="sidebar--options">
         <div className="music-providers">
@@ -37,10 +40,10 @@ export default class SideBar extends Component {
             onClick={() => updateMusicProvider('spotify')} />
           <SVG src={YoutubeIcon} className={youtubeClass}
             onClick={() => updateMusicProvider('youtube')} />
+          <SVG src={FolderIcon} className={deviceClass}
+            onClick={() => updateMusicProvider('device')} />
         </div>
         <div className="options">
-          <div className={`option ${selectedScreen === 'discover' ? 'selected' : ''}`}
-            onClick={() => updateScreen('discover')} >Discover</div>
           <div className={`option ${selectedScreen === 'music' ? 'selected' : ''}`}
             onClick={() => updateScreen('music')} >Liked Music</div>
           <div className={`option ${selectedScreen === 'playlist' ? 'selected' : ''}`}

@@ -160,7 +160,8 @@ export default class App extends Component {
           <Player
             musicProvider={musicProvider}
             playingNow={playingNow}
-            user={user} />
+            user={user}
+            updateUser={this.updateUser} />
           : null
         }
       </div>

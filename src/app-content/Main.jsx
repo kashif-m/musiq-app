@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react'
+import axios from 'axios'
 
 import AuthScreen from './main-content/AuthScreen.jsx'
 import Content from './main-content/Content.jsx'
@@ -11,7 +12,7 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-      selectedScreen: 'search',
+      selectedScreen: 'music',
       showAuthScreen: false
     }
   }
@@ -19,10 +20,24 @@ export default class Main extends Component {
   shouldComponentUpdate(nextProps, nextState) {
 
     if(JSON.stringify(nextProps.playingNow[0]) !== JSON.stringify(this.props.playingNow[0]) &&
-      JSON.stringify(nextProps.user[0]) === JSON.stringify(nextProps.user[0]) &&
-      JSON.stringify(nextProps.token) === JSON.stringify(nextProps.token))
+      JSON.stringify(nextProps.user[0]) === JSON.stringify(nextProps.user[0]))
       return false
     return true
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    
+    const [user, updateUser] = this.props.user
+    if(!prevProps.user && JSON.stringify(prevProps.user) !== JSON.stringify(this.props.user)
+      || !user.likedSongs) {
+      axios.get('http://localhost:5000/user-data/liked-music', {headers: {Authorization: user.token}})
+        .then(res => {
+          const temp = {...user}
+          temp.likedSongs = res.data
+          updateUser(temp)
+        })
+        .catch(err => console.log(err.response.data))
+    }
   }
 
   updateScreen = screen => this.setState({selectedScreen: screen})

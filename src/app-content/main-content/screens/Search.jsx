@@ -62,6 +62,7 @@ export default props => {
     <div className="search-box">
       <input type="text" placeholder='Search ...'
         ref={node => seachQuery = node}
+        autoFocus
         // defaultValue={searchResults ?
           // new URL(searchResults[Object.keys(searchResults)[0]].href).searchParams.get('query') : null}
         onKeyPress={key => key.charCode === 13 ? querySearch() : null} />
