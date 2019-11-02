@@ -9,6 +9,14 @@ export default props => {
 
   const {likedSongs, updateSongsInQueue} = props
   const [playingNow, updatePlayingNow] = props.playingNow
+  const [musicProvider, updateMusicProvider] = props.musicProvider
+
+  const playYoutube = data => {
+
+    if(musicProvider !== 'youtube')
+      updateMusicProvider('youtube')
+    updatePlayingNow(data)
+  }
 
   const renderSongList = () => {
     return (
@@ -21,9 +29,9 @@ export default props => {
               <div className="song" key={_id} >
                 {from === 'youtube' ? <SVG src={YoutubeIcon} className='from' /> : <SVG src={SpotifyIcon} className='from' />}
                 <img src={data.snippet.thumbnails.medium.url} alt=""
-                  onClick={() => updatePlayingNow(data)} />
+                  onClick={() => playYoutube(data)} />
                 <div className="title"
-                  onClick={() => updatePlayingNow(data)} >{data.snippet.title}</div>
+                  onClick={() => playYoutube(data)} >{data.snippet.title}</div>
                 <div className="artist">{data.snippet.channelTitle}</div>
               </div>
             )

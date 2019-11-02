@@ -16,8 +16,11 @@ export default class Content extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+
+    const [selectedScreen, updateScreen] = this.props.screen
     
-    if(this.props.musicProvider[0] !== nextProps.musicProvider[0]) {
+    if(this.props.musicProvider[0] !== nextProps.musicProvider[0] &&
+        selectedScreen === 'search') {
       this.setState({searchResults: false})
       return false
     }
@@ -39,6 +42,7 @@ export default class Content extends Component {
         {
           selectedScreen === 'music' ?
           <Liked
+            musicProvider={[musicProvider, updateMusicProvider]}
             updateSongsInQueue={updateSongsInQueue}
             likedSongs={user.likedSongs}
             playingNow={[playingNow, updatePlayingNow]} />

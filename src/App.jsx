@@ -63,7 +63,7 @@ export default class App extends Component {
       else
         localStorage.removeItem('musiq__user')
 
-    if(prevState.musicProvider !== this.state.musicProvider)
+    if(prevState.musicProvider !== this.state.musicProvider && prevState.playingNow)
       this.setState({playingNow: false})
   }
 

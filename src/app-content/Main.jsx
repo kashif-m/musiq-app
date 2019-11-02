@@ -20,7 +20,8 @@ export default class Main extends Component {
   shouldComponentUpdate(nextProps, nextState) {
 
     if(JSON.stringify(nextProps.playingNow[0]) !== JSON.stringify(this.props.playingNow[0]) &&
-      JSON.stringify(nextProps.user[0]) === JSON.stringify(nextProps.user[0]))
+      JSON.stringify(nextProps.user[0]) === JSON.stringify(nextProps.user[0]) &&
+      nextProps.musicProvider[0] === this.props.musicProvider[0])
       return false
     return true
   }
