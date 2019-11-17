@@ -81,12 +81,13 @@ export default class Player extends Component {
   checkTitle = (onLoad = false) => {
 
     const {playingNow, musicProvider} = this.props
-    const f = onLoad ? false : !this.state.fullscreen
-    const title = musicProvider === 'spotify' ? playingNow.name
+    const f = onLoad ? true : !this.state.fullscreen
+    let title = musicProvider === 'spotify' ? playingNow.name
         : musicProvider === 'youtube' ? playingNow.snippet.title
         : musicProvider === 'device' ? playingNow.common.title : ''
     if(title.length > 20 && f)
-      this.setState({title: title.slice(0, 20) + ' ...'})
+      title = title.slice(0, 20) + ' ...'
+    this.setState({title})
     return title
   }
 
