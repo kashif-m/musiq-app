@@ -17,10 +17,9 @@ export default class Player extends Component {
   constructor(props) {
     super(props)
 
-    const {playingNow} = this.props
     this.state = {
       fullscreen: false,
-      title: '',
+      title: this.checkTitle(true),
       trackOptions: {
         playing: false,
         duration: 0,
@@ -33,7 +32,6 @@ export default class Player extends Component {
 
   componentDidMount() {
 
-    this.checkTitle()
     if(this.props.musicProvider === 'youtube') {
       const opts = {
         width: 0,
@@ -41,7 +39,8 @@ export default class Player extends Component {
       }
       this.player = new YTPlayer('#music-player', opts)
       this.playYoutube(this.props.playingNow.id.videoId)
-    }
+    } else if(this.props.musicProvider === 'deivce')
+      this.playLocalMusic()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -79,14 +78,16 @@ export default class Player extends Component {
       : `${minutes}:${sec}`
   }
 
-  checkTitle = () => {
+  checkTitle = (onLoad = false) => {
 
     const {playingNow, musicProvider} = this.props
-    const title = musicProvider === 'spotify' ? playingNow.name : playingNow.snippet.title
-    if(title.length > 20 && !this.state.fullscreen)
+    const f = onLoad ? false : !this.state.fullscreen
+    const title = musicProvider === 'spotify' ? playingNow.name
+        : musicProvider === 'youtube' ? playingNow.snippet.title
+        : musicProvider === 'device' ? playingNow.common.title : ''
+    if(title.length > 20 && f)
       this.setState({title: title.slice(0, 20) + ' ...'})
-    else
-      this.setState({title})
+    return title
   }
 
   playSpotify = uri => {
@@ -156,15 +157,26 @@ export default class Player extends Component {
     })
   }
 
+  playLocalMusic = () => {
+
+    const {path, common} = this.props.playingNow
+    console.log(path)
+    this.setState({title: this.checkTitle()})
+    const localPlayer = new Audio(path)
+    console.log(localPlayer)
+    localPlayer.play()
+  }
+
   play = () => {
 
     const {musicProvider, playingNow} = this.props
     if(musicProvider === 'spotify')
       console.log('play-spotify')
-    else {
+    else if(musicProvider === 'youtube') {
       this.player.load(playingNow.id.videoId)
       this.player.play()
-    }
+    } else if(musicProvider === 'device')
+      this.playLocalMusic()
   }
 
   changeSong = val => {
@@ -201,7 +213,6 @@ export default class Player extends Component {
 
   renderPlayer = () => {
 
-    const {playingNow, musicProvider, updatePlayingNow} = this.props
     const [queue, updateQueue] = this.props.queue
     const {trackOptions} = this.state
 
@@ -225,27 +236,25 @@ export default class Player extends Component {
           <SVG src={NextIcon} className='next-song'
             onClick={() => queue.playing ? this.changeSong(1) : null} />
         </div>
-        <div className="seeker"
+        <div className="seeker" id='seeker'
           onClick={(event) => {
             let start, end
-            if(this.state.fullscreen) {
+            if(this.state.fullscreen)
               start = 20
-              end = event.target.clientWidth + start
-            } else {
+            else {
               const trackWidth = document.getElementById('track-cover').clientWidth
               const detailsWidth = document.getElementById('song-details').clientWidth + 40
               start = trackWidth + detailsWidth + 20
-              end = start + event.target.clientWidth
             }
+            let clientWidth = document.getElementById('seeker').clientWidth
+            end = clientWidth + start
             const perc = this.mapValue(event.clientX, start, end, 0, 100)
             this.player.seek(perc * trackOptions.duration / 100)
           }} >
             <div className="tracker"
               style={
                 this.player ?
-                {
-                  width: `${this.mapValue(this.player.getCurrentTime(), 0, trackOptions.duration, 0, 100)}%`
-                }
+                { width: `${this.mapValue(this.player.getCurrentTime(), 0, trackOptions.duration, 0, 100)}%` }
                 : {}
               } ></div>
         </div>
@@ -286,6 +295,23 @@ export default class Player extends Component {
         <div className="song-details" id='song-details' >
           <div className="title">{this.state.title}</div>
           <div className="artist">{channelTitle}</div>
+        </div>
+      </React.Fragment>
+    )
+  }
+
+  renderLocalMusicDetails = () => {
+
+    const song = this.props.playingNow
+    const {picture, artist} = song.common
+    
+    return (
+      <React.Fragment>
+        <img src={picture && picture[0].url} alt=""
+          className="track-cover" id="track-cover"/>
+        <div className="song-details" id="song-deatils">
+          <div className="title">{this.state.title}</div>
+          <div className="artist">{artist}</div>
         </div>
       </React.Fragment>
     )
@@ -338,13 +364,13 @@ export default class Player extends Component {
       <div className={`player${fullscreen ? ' fullscreen' : ''}`} >
         { fullscreen ? this.renderButtons() : this.renderSongOptions() }
         {
-          musicProvider === 'spotify'
-          ? this.renderSpotifyDetails()
-          : this.renderYoutubeDetails()
+          musicProvider === 'spotify' ? this.renderSpotifyDetails()
+          : musicProvider === 'youtube' ? this.renderYoutubeDetails()
+          : musicProvider === 'device' ? this.renderLocalMusicDetails()
+          : null
         }
         {this.renderPlayer()}
       </div>
     )
   }
 }
-

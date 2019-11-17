@@ -2,6 +2,10 @@
 @font-face
   src: url(../assets/fonts/Avenir-Next-Font/AvenirNextLTPro-Bold.otf)
   font-family: AvenirNextLTProBold
+
+@font-face
+  src: url(../assets/fonts/Avenir-Next-Font/AvenirNextLTPro-Demi.otf)
+  font-family: AvenirNextLTProDemi
   
 @font-face
   src: url(../assets/fonts/Cabin/Cabin-Regular.ttf)
@@ -20,8 +24,8 @@
   font-family: BonvenoCF
 
 @font-face
-  src: url(../assets/fonts/Gotham-Font/GothamMedium.ttf)
-  font-family: GothamMedium
+  src: url(../assets/fonts/Gotham-Font/Gotham-Bold.otf)
+  font-family: GothamBold
 
 @font-face
   src: url(../assets/fonts/Gotham-Font/Gotham-Black.otf)
@@ -34,6 +38,10 @@
 @font-face
   src: url(../assets/fonts/Montserrat/Montserrat-Medium.ttf)
   font-family: MontserratMedium
+
+@font-face
+  src: url(../assets/fonts/Montserrat/Montserrat-SemiBold.ttf)
+  font-family: MontserratSemiBold
 
 @font-face
   src: url(../assets/fonts/Open_Sans/OpenSans-Bold.ttf)
@@ -58,7 +66,6 @@
 input
   outline: none
 
-
 $smoky-black: #13070C
 $red: #D12323
 $yellow: #FFBE0B
@@ -68,11 +75,20 @@ $deep-red: #B80C09
 $snow: #FBFAF8
 $green: #698F3F
 $dark-brown: #190F00
-$dark: #0F0000
+$dark: #000000
 $rich-black: #040F16
 $blue: #3067FF
 $cyan: #1D84B5
 $pink: #9D858D
+
+// line height crop mixin
+@mixin lhCrop($line-height)
+  &::before
+    content: ''
+    display: block
+    height: 0
+    width: 0
+    margin-top: calc((1 - #{$line-height}) * 0.5em)
 
 @import './app.sass'
 @import './auth-screen.sass'
@@ -84,3 +100,4 @@ html, body, #react-app, .app
   margin: 0
   padding: 0
   overflow: hidden
+  font-smooth: 2em

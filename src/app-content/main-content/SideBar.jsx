@@ -8,6 +8,15 @@ import YoutubeIcon from '../../assets/images/youtube.svg'
 
 export default class SideBar extends Component {
 
+  componentDidUpdate(prevProps, prevState) {
+
+    const [tMP, tUMP] = this.props.musicProvider
+    const [pMP, pUMP] = prevProps.musicProvider
+
+    if(tMP !== pMP && tMP === 'device')
+      this.props.screen[1]('local-music')
+  }
+
   renderLoginScreen = () => {
 
     const [showAuthScreen, updateAuthScreen] = this.props.authScreen
@@ -50,6 +59,9 @@ export default class SideBar extends Component {
             onClick={() => updateScreen('playlist')} >Playlists</div>
           <div className={`option ${selectedScreen === 'search' ? 'selected' : ''}`}
             onClick={() => updateScreen('search')} >Search</div>
+          { musicProvider === 'device' &&
+            <div className={`option ${selectedScreen === 'local-music' ? 'selected' : ''}`}
+              onClick={() => updateScreen('local-music')} >Local Music</div> }
         </div>
       </div>
     )

@@ -9,11 +9,11 @@
   justify-content: flex-end
   background-image: linear-gradient(rgba(0, 0, 0, .7), $dark)
   font:
-    family: GillSans
+    family: CabinRegular
     size: 30
     weight: 900
 
-  img
+  .close
     cursor: pointer
     height: 50
     position: relative
@@ -33,7 +33,7 @@
       cursor: pointer
       font-size: 25
       border-radius: 100px
-      padding: 5 30 2 30
+      padding: 3 30
       &.selected
         color: $dark
         background-color: $yellow
@@ -55,9 +55,10 @@
         background-color: white
 
   .submit
+    @include lhCrop(1.2)
     cursor: pointer
     font-size: 40
     background-color: $green
-    padding: 5 30 1 30
+    padding: 5 20
     margin: 10 0 20vh 0
     border-radius: 100px

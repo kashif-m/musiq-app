@@ -1,6 +1,9 @@
 
 import React, { Component } from 'react'
+import SVG from 'react-inlinesvg'
 import axios from 'axios'
+
+import CloseIcon from '../../assets/images/close.svg'
 
 export default class AuthScreen extends Component {
 
@@ -84,7 +87,7 @@ export default class AuthScreen extends Component {
 
     return (
       <div className="auth-screen">
-        <img src={require('../../assets/images/close.svg')} alt="x"
+        <SVG src={CloseIcon} className='close'
           onClick={() => updateAuthScreen(false)} />
         <div className="buttons">
           <div className={buttonClasses[0]}
