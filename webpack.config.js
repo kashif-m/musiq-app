@@ -16,8 +16,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.join(__dirname, '/build'),
-    filename: '[name].[chunkhash].js',
-    publicPath: '/'
+    filename: '[name].[chunkhash].js'
   },
   module: {
     rules: [
@@ -41,11 +40,11 @@ module.exports = {
     ]
   },
   plugins: [CSSPlugin, HTMLPlugin],
-  // devServer: {
-    // proxy: [{
-      // context: ['/user, /user/new'],
-      // target: 'http://localhost:5000'
-    // }],
-    // historyApiFallback: true
-  // }
+  devServer: {
+    proxy: [{
+      context: ['/user, /user/new'],
+      target: 'http://localhost:5000'
+    }],
+    historyApiFallback: true
+  }
 }

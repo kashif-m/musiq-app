@@ -322,7 +322,6 @@ export default class Player extends Component {
           <div className="title">{this.state.title}</div>
           <div className="artist">{artist}</div>
         </div>
-        <audio src="/Users/apple/Downloads/Foster The People - Sacred Hearts Club (2017) WEB FLAC/02. Doing It for the Money.flac"></audio>
       </React.Fragment>
     )
   }
@@ -332,7 +331,7 @@ export default class Player extends Component {
     const {etag} = this.props.playingNow
     const {likedSongs} = this.props.user
     
-    return likedSongs.filter(song => song.data.etag === etag).length === 1
+    return likedSongs && likedSongs.filter(song => song.data.etag === etag).length === 1
   }
 
   renderButtons = () => {
@@ -342,20 +341,26 @@ export default class Player extends Component {
       <div className="fullscreen-buttons">
         <SVG src={CloseIcon} className='close'
           onClick={() => this.setState({fullscreen: false})} />
-        <div className={`${saved ? 'remove' : 'save'} button`}
-          onClick={() => this.saveSong()} >
-          {
-            saved ? 'Remove' : '+ Save'
-          }
+        {
+          this.props.user &&
+          <div className={`${saved ? 'remove' : 'save'} button`}
+            onClick={() => this.saveSong()} >
+            {
+              saved ? 'Remove' : '+ Save'
+            }
+          </div>
+        }
         </div>
-      </div>
     )
   }
 
   renderSongOptions = () => (
     <div className="song-options">
-      <SVG src={SaveIcon} className={`save${this.isSaved() ? ' saved' : ''}`}
-        onClick={() => this.saveSong()} />
+      {
+        this.props.user &&
+        <SVG src={SaveIcon} className={`save${this.isSaved() ? ' saved' : ''}`}
+          onClick={() => this.saveSong()} />
+      }
       <SVG src={FullScreenIcon}
         className='fullscreen'
         onClick={() => this.setState({fullscreen: !this.state.fullscreen})} />

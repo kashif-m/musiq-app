@@ -28,7 +28,6 @@ export default class App extends Component {
     
     const userString = localStorage.getItem('musiq__user')
     let user = false
-    console.log('mounted')
 
     if(userString)
       try {
