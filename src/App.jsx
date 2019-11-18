@@ -15,18 +15,20 @@ export default class App extends Component {
   state = {
     user: false,
     playingNow: false,
-    musicProvider: 'youtube',
+    musicProvider: 'device',
     queue: {
       current: 0,
       playing: false,
       songs: []
-    }
+    },
+    loading: false
   }
 
   componentDidMount() {
     
     const userString = localStorage.getItem('musiq__user')
     let user = false
+    console.log('mounted')
 
     if(userString)
       try {
@@ -69,8 +71,10 @@ export default class App extends Component {
 
   getSpotifyCode = async user => {
 
+    this.setState({loading: true})
     const {query} = queryString.parseUrl(window.location.href)
 
+    console.log(query)
     if(!query.code) {
       const scopes = encodeURI(["streaming", "user-read-email", "user-read-private", "user-modify-playback-state"].join(' '))
       return window.location.replace(`https://accounts.spotify.com/authorize?client_id=${spotify.clientID}&response_type=code&redirect_uri=${redirectURI.dev}&scope=${scopes}`)
@@ -142,6 +146,11 @@ export default class App extends Component {
     player.connect()
   }
 
+  logout = () => {
+    console.log('logging out')
+    localStorage.removeItem('musiq__user')
+    window.location.reload()
+  }
   saveUser = user => localStorage.setItem('musiq__user', JSON.stringify(user))
   updateUser = user => this.setState({user})
   updatePlayingNow = song => this.setState({playingNow: song})
@@ -158,11 +167,13 @@ export default class App extends Component {
 
   render() {
 
-    const {user, playingNow, musicProvider, queue} = this.state
+    const {user, playingNow, musicProvider, queue, loading} = this.state
     return (
       <div className='app' >
         <Script url="https://sdk.scdn.co/spotify-player.js" />
+        {loading && <div className="loading">LOADING . . .</div> }
         <Header
+          logout={this.logout}
           user={user} />
         <Main
           updateSongsInQueue={this.updateSongsInQueue}

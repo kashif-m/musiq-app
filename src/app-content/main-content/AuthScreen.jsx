@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import SVG from 'react-inlinesvg'
 import axios from 'axios'
 
+import CancelIcon from '../../assets/images/cancel.svg'
 import CloseIcon from '../../assets/images/close.svg'
 
 export default class AuthScreen extends Component {
@@ -11,7 +12,8 @@ export default class AuthScreen extends Component {
     super(props)
 
     this.state = {
-
+      serverErr: false,
+      serverCall: false
     }
   }
 
@@ -35,25 +37,30 @@ export default class AuthScreen extends Component {
 
   submit = requestType => {
 
+    this.setState({serverCall: true})
     const {getSpotifyCode} = this.props
-    const [user, updateUser] = this.props.user
     const [authScreen, updateAuthScreen] = this.props.authScreen
-
+  
     const newUser = {
       username: this.username.value,
       password: this.password.value
     }
 
+    console.log(requestType)
+
     if(requestType === 'register')
       axios.post('http://localhost:5000/user/new', {user: newUser})
         .then(res => {
-          console.log('registered.')
+          this.setState({serverCall: false})
           updateAuthScreen('login')
         })
         .catch(err => console.log(err))
     else if(requestType === 'login')
       axios.post('http://localhost:5000/user/login', {user: newUser})
         .then(res => {
+          this.setState({serverCall: false})
+          if(res.data.err)
+            this.setState({serverErr: res.data.err})
           if(res.data) {
             this.saveUser(res.data)
             getSpotifyCode(res.data)
@@ -66,12 +73,11 @@ export default class AuthScreen extends Component {
     <div className={`${authScreen} form`}>
       <input type="text" autoFocus
         placeholder='username'
-        ref={node => this.username = node}
-         />
+        ref={node => this.username = node} />
       <input type="password"
         placeholder='password'
         ref={node => this.password = node}
-         />
+        onKeyDown={key => key.keyCode === 13 ? this.submit(authScreen) : null} />
     </div>
   )
 
@@ -85,6 +91,8 @@ export default class AuthScreen extends Component {
       `button${showAuthScreen === 'register' ? ' selected' : ''}`
     ]
 
+    const {serverErr, serverCall} = this.state
+
     return (
       <div className="auth-screen">
         <SVG src={CloseIcon} className='close'
@@ -95,13 +103,19 @@ export default class AuthScreen extends Component {
           <div className={buttonClasses[1]}
             onClick={() => showAuthScreen !== 'register' ? updateAuthScreen('register') : null} >register</div>
         </div>
+        { this.renderInput(showAuthScreen) }
         {
-          showAuthScreen === 'login'
-          ? this.renderInput(showAuthScreen)
-          : this.renderInput(showAuthScreen)
+          serverErr &&
+          <div className="error">
+            {serverErr}
+            <SVG src={CancelIcon} onClick={() => this.setState({serverErr: false})} />
+          </div>
         }
-        <div className="submit"
-          onClick={() => this.submit(showAuthScreen)} >submit</div>
+        <div className={`submit${serverCall ? ' disabled' : ''}`}
+          disabled={this.state.serverCall}
+          onClick={() => this.submit(showAuthScreen)} >
+          { serverCall ? 'loading . . .' : 'submit' }
+        </div>
       </div>
     )
   }

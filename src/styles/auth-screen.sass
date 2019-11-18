@@ -3,10 +3,11 @@
   position: absolute
   height: 92vh
   width: 100vw
-  display: flex
-  flex-flow: column
+  align-self: center
+  display: grid
+  grid-template-rows: auto repeat(2, max-content) 20px auto
   align-items: center
-  justify-content: flex-end
+  justify-content: center
   background-image: linear-gradient(rgba(0, 0, 0, .7), $dark)
   font:
     family: CabinRegular
@@ -16,9 +17,9 @@
   .close
     cursor: pointer
     height: 50
-    position: relative
-    left: 150
-    bottom: 50
+    justify-self: flex-end
+    align-self: flex-end
+    margin: 0 0 25 0
     transition: all .3s
     &:hover
       height: 55
@@ -39,10 +40,11 @@
         background-color: $yellow
 
   .form
-    padding: 20 0
+    justify-self: center
     display: flex
     flex-flow: column
     input
+      min-width: 200
       background-color: #DEDEDE
       font:
         family: PTSansBold
@@ -54,11 +56,26 @@
       &:focus
         background-color: white
 
+  .error
+    font-size: 15
+    background-color: $red
+    padding: 2 10
+    justify-self: center
+    svg
+      cursor: pointer
+      margin-left: 10
+      height: 10
+
   .submit
     @include lhCrop(1.2)
+    grid-row: -2 / -1
+    align-self: flex-start
+    justify-self: center
     cursor: pointer
-    font-size: 40
+    font-size: 30
+    margin-top: 20
     background-color: $green
     padding: 5 20
-    margin: 10 0 20vh 0
     border-radius: 100px
+    &.disabled
+      cursor: wait

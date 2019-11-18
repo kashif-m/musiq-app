@@ -55,13 +55,11 @@ export default class SideBar extends Component {
         <div className="options">
           <div className={`option ${selectedScreen === 'music' ? 'selected' : ''}`}
             onClick={() => updateScreen('music')} >Liked Music</div>
-          <div className={`option ${selectedScreen === 'playlist' ? 'selected' : ''}`}
-            onClick={() => updateScreen('playlist')} >Playlists</div>
           <div className={`option ${selectedScreen === 'search' ? 'selected' : ''}`}
             onClick={() => updateScreen('search')} >Search</div>
           { musicProvider === 'device' &&
-            <div className={`option ${selectedScreen === 'local-music' ? 'selected' : ''}`}
-              onClick={() => updateScreen('local-music')} >Local Music</div> }
+            <div className={`option ${selectedScreen === 'device' ? 'selected' : ''}`}
+              onClick={() => updateScreen('device')} >Local Music</div> }
         </div>
       </div>
     )

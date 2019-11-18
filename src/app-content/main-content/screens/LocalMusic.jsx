@@ -8,6 +8,7 @@ export default class LocalMusic extends Component {
 	constructor(props) {
 		super(props)
 
+		const {metadata} = props
 		this.state = {
 			selection: 'all'
 		}
@@ -36,29 +37,27 @@ export default class LocalMusic extends Component {
 
 		return (
 			<div className="all">
-				{metadata ? metadata.map(song => {
+				{
+					metadata.map(song => {
 					
-					const {artist, title, picture} = song.common
-					const url = picture ? picture[0].url : false
-					return (
-						<div className="song" key={title} >
-							{
-								url ?
-								<img src={url} alt="i" className='cover'
-									onClick={() => updatePlayingNow(song)} />
-								: <SVG src={DefaultCover} className='cover'
+						const {artist, title, picture} = song.common
+						const url = picture ? picture[0].url : false
+						return (
+							<div className="song" key={title} >
+								{
+									url ?
+									<img src={url} alt="i" className='cover'
 										onClick={() => updatePlayingNow(song)} />
-							}
-							<div className="title"
-								onClick={() => updatePlayingNow(song)} >{title}</div>
-							<div className="artist">{artist}</div>
-							<div className="album"></div>
-						</div>
-					)
-				})
-				: <div className="empty">
-					'No music found.'
-				</div> }
+									: <SVG src={DefaultCover} className='cover'
+											onClick={() => updatePlayingNow(song)} />
+								}
+								<div className="title"
+									onClick={() => updatePlayingNow(song)} >{title}</div>
+								<div className="artist">{artist}</div>
+								<div className="album"></div>
+							</div>)
+					})
+				}
 			</div>
 		)
 	}
@@ -85,17 +84,31 @@ export default class LocalMusic extends Component {
 	render() {
 
 		const {selection} = this.state
+		const {metadata} = this.props
 
 		return (
 			<div className="local-music">
 				<div className="heading">Local Music</div>
-				{this.renderHeader()}
 				{
-					selection === 'all' ? this.renderAllSongs()
-					: selection === 'artists' ? this.renderArtists()
-					: selection === 'albums' ? this.renderAlbums()
-					: null
+					metadata && metadata.length > 0 ?
+					<React.Fragment>
+						{this.renderHeader()}
+						{
+							(selection === 'all' ? this.renderAllSongs()
+							: selection === 'artists' ? this.renderArtists()
+							: selection === 'albums' ? this.renderAlbums()
+							: null)
+						}
+					</React.Fragment>
+					: <div className="empty">
+					{
+						!metadata ?
+						'Loading . . .'
+						: 'No music found'
+					}
+				</div>
 				}
+				
 			</div>
 		)
 	}

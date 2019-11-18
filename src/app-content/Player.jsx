@@ -87,7 +87,8 @@ export default class Player extends Component {
         : musicProvider === 'device' ? playingNow.common.title : ''
     if(title.length > 20 && f)
       title = title.slice(0, 20) + ' ...'
-    this.setState({title})
+    if(!onLoad)
+      this.setState({title})
     return title
   }
 
@@ -100,7 +101,6 @@ export default class Player extends Component {
       }
       const {user} = this.props
       const token = 'Bearer ' + user.spotify.access_token
-      console.log(token)
       axios.put('https://api.spotify.com/v1/me/player/play', data, {
         headers: {
           Authorization: token
@@ -162,10 +162,18 @@ export default class Player extends Component {
 
     const {path, common} = this.props.playingNow
     console.log(path)
-    this.setState({title: this.checkTitle()})
-    const localPlayer = new Audio(path)
-    console.log(localPlayer)
-    localPlayer.play()
+    var audio = new Audio()
+    audio.src = path
+    var playPromise = audio.play();
+    if (playPromise !== undefined) {
+          playPromise.then(function() {
+             audio.addEventListener('timeupdate',function() {
+                console.log(audio.currentTime, audio.duration);
+             }, true);
+          }).catch(function(error) {
+                console.error('Failed to start your sound, retrying.');
+          });
+    }
   }
 
   play = () => {
@@ -314,6 +322,7 @@ export default class Player extends Component {
           <div className="title">{this.state.title}</div>
           <div className="artist">{artist}</div>
         </div>
+        <audio src="/Users/apple/Downloads/Foster The People - Sacred Hearts Club (2017) WEB FLAC/02. Doing It for the Money.flac"></audio>
       </React.Fragment>
     )
   }
@@ -339,7 +348,6 @@ export default class Player extends Component {
             saved ? 'Remove' : '+ Save'
           }
         </div>
-        <div className="add-to-playlist">Add To Playlist</div>
       </div>
     )
   }

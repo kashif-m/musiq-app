@@ -78,7 +78,7 @@ export default class Content extends Component {
             musicProvider={musicProvider}
             user={user}
             playingNow={[playingNow, updatePlayingNow]} />
-          : selectedScreen === 'local-music' ?
+          : selectedScreen === 'device' ?
           <LocalMusic
             metadata={metadata}
             user={user}

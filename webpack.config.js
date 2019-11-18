@@ -41,11 +41,11 @@ module.exports = {
     ]
   },
   plugins: [CSSPlugin, HTMLPlugin],
-  devServer: {
-    proxy: [{
-      context: ['/user, /user/new'],
-      target: 'http://localhost:5000'
-    }],
-    historyApiFallback: true
-  }
+  // devServer: {
+    // proxy: [{
+      // context: ['/user, /user/new'],
+      // target: 'http://localhost:5000'
+    // }],
+    // historyApiFallback: true
+  // }
 }

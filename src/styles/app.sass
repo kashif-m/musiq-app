@@ -4,6 +4,20 @@
   max-height: 100vh
   grid-template-rows: max-content 1fr max-content
 
+  & > .loading
+    z-index: 100
+    position: absolute
+    height: 100vh
+    width: 100vw
+    display: flex
+    align-items: center
+    justify-content: center
+    background-color: $dark
+    color: white
+    font:
+      family: MontserratSemiBold
+      size: 30
+
   & > .header
     height: 8vh
     padding: 0 10vw
@@ -25,6 +39,14 @@
       display: flex
       align-items: center
 
+      .logout
+        cursor: pointer
+        margin-left: 20
+        font-size: 13
+        background-color: $dark
+        color: white
+        padding: 5 15
+        border-radius: 100px
       svg
         margin-right: 15
 
@@ -160,6 +182,9 @@
               family: CabinRegular
               size: 15
             & > div
+              width: max-content
+              overflow: hidden
+              max-height: 20
               align-self: flex-end
               cursor: pointer
               padding: 3 20
@@ -247,11 +272,19 @@
           & > div:nth-child(2)
             height: 100%
 
+        .empty
+          color: #aeaeae
+          margin-left: 10
+          font:
+            family: GothamBlack
+            size: 35
+
         & > div:nth-child(3)
           display: flex
           flex-flow: column
           align-items: flex-start
           overflow: auto
+          padding-bottom: 30
           .song
             display: grid
             grid-template-columns: max-content auto
@@ -259,7 +292,7 @@
             margin-bottom: 20
             font:
               family: AvenirNextLTProDemi
-            img, svg
+            & > img, svg
               width: 70
               height: 70
               cursor: pointer
@@ -275,9 +308,12 @@
               font-size: 25
               margin-bottom: 5
 
+
       .search
         padding-right: 50
         &-box
+          display: flex
+          width: max-content
           input
             cursor: default
             min-width: 500
@@ -302,9 +338,11 @@
             height: 20
             cursor: pointer
             position: relative
-            top: 2
+            top: 10
             right: 30
             color: black
+            & > g
+              height: 20
 
         &-results
           overflow: auto
@@ -379,7 +417,7 @@
     grid-column: 1 / -1
 
     display: grid
-    grid-template-columns: repeat(2, max-content) auto max-content
+    grid-template-columns: max-content max-content auto max-content
     grid-template-rows: max-content
 
     font:

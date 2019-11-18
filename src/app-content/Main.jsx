@@ -12,9 +12,15 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-      selectedScreen: 'local-music',
+      selectedScreen: 'device',
       showAuthScreen: false
     }
+  }
+
+  componentDidMount() {
+
+    const [user, updateUser] = this.props.user
+    // if(!user && this.state.selectedScreen === 'local-music')
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -28,9 +34,12 @@ export default class Main extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     
+    const [pU, uPU] = prevProps.user
     const [user, updateUser] = this.props.user
-    if(!prevProps.user && JSON.stringify(prevProps.user) !== JSON.stringify(this.props.user)
-      || !user.likedSongs) {
+    const [pMP, uPMP] = prevProps.musicProvider
+    const [mP, uMP] = this.props.musicProvider
+    if(!prevProps.user && JSON.stringify(user) !== JSON.stringify(pU)
+      || user && !user.likedSongs) {
       axios.get('http://localhost:5000/user-data/liked-music', {headers: {Authorization: user.token}})
         .then(res => {
           const temp = {...user}
@@ -39,6 +48,9 @@ export default class Main extends Component {
         })
         .catch(err => console.log(err.response.data))
     }
+    
+    if(mP !== pMP && this.state.selectedScreen === 'local-music' && mP !== 'local')
+      this.setState({selectedScreen: 'search'})
   }
 
   updateScreen = screen => this.setState({selectedScreen: screen})
