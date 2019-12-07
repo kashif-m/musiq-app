@@ -39,7 +39,7 @@ export default class Player extends Component {
       }
       this.player = new YTPlayer('#music-player', opts)
       this.playYoutube(this.props.playingNow.id.videoId)
-    } else if(this.props.musicProvider === 'deivce')
+    } else if(this.props.musicProvider === 'device')
       this.playLocalMusic()
   }
 

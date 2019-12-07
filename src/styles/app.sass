@@ -344,6 +344,13 @@
             & > g
               height: 20
 
+        &-info
+          padding: 20 0 0 10
+          font:
+            size: 15
+            family: GothamBold
+          color: #a1a1a1
+
         &-results
           overflow: auto
           display: flex
@@ -364,13 +371,13 @@
               display: grid
               grid-template-columns: max-content auto
               grid-template-rows: auto max-content
-              img
+              img, svg
                 grid-row: 1 / -1
 
             .track, .album
               justify-self: flex-start
               margin: 10
-              img
+              img, svg
                 max-width: 80
                 height: 80
                 border-radius: 100px

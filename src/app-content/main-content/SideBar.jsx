@@ -12,9 +12,6 @@ export default class SideBar extends Component {
 
     const [tMP, tUMP] = this.props.musicProvider
     const [pMP, pUMP] = prevProps.musicProvider
-
-    if(tMP !== pMP && tMP === 'device')
-      this.props.screen[1]('local-music')
   }
 
   renderLoginScreen = () => {

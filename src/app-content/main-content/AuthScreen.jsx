@@ -46,13 +46,17 @@ export default class AuthScreen extends Component {
       password: this.password.value
     }
 
-    console.log(requestType)
+    if(requestType === 'register')
+      newUser.email = this.email.value
 
     if(requestType === 'register')
       axios.post('http://localhost:5000/user/new', {user: newUser})
         .then(res => {
           this.setState({serverCall: false})
-          updateAuthScreen('login')
+          if(res.data.err)
+            this.setState({serverErr: res.data.err})
+          else
+            updateAuthScreen('login')
         })
         .catch(err => console.log(err))
     else if(requestType === 'login')
@@ -61,7 +65,7 @@ export default class AuthScreen extends Component {
           this.setState({serverCall: false})
           if(res.data.err)
             this.setState({serverErr: res.data.err})
-          if(res.data) {
+          else if(res.data) {
             this.saveUser(res.data)
             getSpotifyCode(res.data)
           }
@@ -74,6 +78,14 @@ export default class AuthScreen extends Component {
       <input type="text" autoFocus
         placeholder='username'
         ref={node => this.username = node} />
+      {
+        authScreen === 'register' ?
+        <input type="email"
+          placeholder="email"
+          ref={node => this.email = node}
+          name="" />
+        : null
+      }
       <input type="password"
         placeholder='password'
         ref={node => this.password = node}

@@ -3,12 +3,15 @@ import React, {useState, useEffect} from 'react'
 import SVG from 'react-inlinesvg'
 import axios from 'axios'
 
+import DefaultCover from '../../../assets/images/defaultcover.svg'
 import SearchIcon from '../../../assets/images/search.svg'
 
 import {youtubeAPI} from '../../../config/keys'
 
 export default props => {
   
+  const [info, updateInfo] = useState('Searching ...')
+  const [wait, updateWait] = useState(false)
   const {user, musicProvider} = props
   const [searchParams, setSearchParams] = useState({
     type: ['album', 'track', 'artist'],
@@ -24,11 +27,23 @@ export default props => {
     if(!user)
       return
 
+    updateWait(true)
     if(musicProvider === 'spotify')
       spotifySearch()
-    else
+    else if(musicProvider === 'youtube')
       youtubeSearch()
+    else if(musicProvider === 'device')
+      deviceSearch()
   }
+
+  useEffect(() => {
+
+    if(props.metadata && musicProvider === 'device') {
+      info === 'Searching ...' && updateInfo('Search complete.')
+      setTimeout(() => info !== 'Search complete.' && updateInfo(false), 2000)
+    } else if(musicProvider !== 'device' && info.length !== 0)
+      updateInfo(false)
+  }, [props.metadata, musicProvider])
 
   const youtubeSearch = () => {
 
@@ -37,7 +52,10 @@ export default props => {
     const regionCode = 'US'
     const videoLicense = 'youtube'
     axios.get(`https://www.googleapis.com/youtube/v3/search?key=${youtubeAPI}&part=snippet&q=${query}&type=${type}&videoLicense=${videoLicense}&regionCode=${regionCode}`)
-      .then(res => updateSearchResults(res.data))
+      .then(res => {
+        updateSearchResults(res.data)
+        updateWait(false)
+      })
       .catch(err => updateSearchResults(false))
   }
 
@@ -54,18 +72,40 @@ export default props => {
         Object.keys(res.data).length > 0
         ? updateSearchResults(res.data)
         : updateSearchResults(false)
+        updateWait(false)
       })
       .catch(err => console.log(err.response))
   }
 
+  const deviceSearch = () => {
+
+    const searchQuery = seachQuery.value.toLowerCase()
+    console.log(searchQuery)
+    if(seachQuery.length === 0)
+      updateInfo('Enter search value.')
+    const {metadata} = props
+    const searchResults = metadata.filter(file => file.common.title.toLowerCase().includes(searchQuery))
+    if(searchResults.length === 0) {
+      updateSearchResults(false)
+      updateInfo('No results found.')
+    }
+    else
+      updateSearchResults(searchResults)
+    updateWait(false)
+  }
+
   const renderSearch = () => (
     <div className="search-box">
-      <input type="text" placeholder='Search ...'
+      <input type="text" placeholder={'Search ' +
+                (musicProvider === 'youtube' ? 'on YouTube'
+                : musicProvider === 'spotify' ? 'on Spotify'
+                : musicProvider === 'device' ? 'music on device'
+                : null) + ' ... '}
         ref={node => seachQuery = node}
         autoFocus
         // defaultValue={searchResults ?
           // new URL(searchResults[Object.keys(searchResults)[0]].href).searchParams.get('query') : null}
-        onKeyPress={key => key.charCode === 13 ? querySearch() : null} />
+        onKeyPress={key => key.charCode === 13 && info !== 'Searching ...' && !wait ? querySearch() : null} />
       <SVG src={SearchIcon} onClick={() => querySearch()} />
     </div>
   )
@@ -178,9 +218,58 @@ export default props => {
     )
   }
 
+  const renderDeviceSearchResults = () => {
+
+    return (
+      <div className="tracks">
+        {
+          searchResults.length === 0 ? <div className="empty">No results found.</div>
+          : <div className="track-list">
+            {
+              searchResults.map(song => {
+					
+                const {artist, title, picture} = song.common
+                const url = picture ? picture[0].url : false
+                return (
+                  <div className="track" key={song.path} >
+                    {
+                      url ?
+                      <img src={url} alt="i" className='cover'
+                        onClick={() => updatePlayingNow(song)} />
+                      : <SVG src={DefaultCover} className='cover'
+                          onClick={() => updatePlayingNow(song)} />
+                    }
+                    <div className="title"
+                      onClick={() => updatePlayingNow(song)} >{title}</div>
+                    <div className="artist">{artist}</div>
+                    <div className="album"></div>
+                  </div>)
+              })
+            }
+          </div>
+        }
+      </div>
+    )
+  }
+
   const renderSearchResults = () => (
     <div className="search-results">
-      {musicProvider === 'spotify' ? renderSpotifySearchResults() : renderYoutubeSearchResults()}
+      {
+        musicProvider === 'spotify' ?
+        renderSpotifySearchResults()
+        : musicProvider === 'youtube' ?
+        renderYoutubeSearchResults()
+        : musicProvider === 'device' ?
+        renderDeviceSearchResults()
+        : null
+      }
+    </div>
+  )
+
+  const renderSearchInfo = () => (
+    <div className="search-info">
+      {wait && <div className="loading">Loading ...</div>}
+      {info && <div className="info">{info}</div> }
     </div>
   )
   
@@ -193,8 +282,9 @@ export default props => {
       </div>
       {renderSearch()}
       {
-        searchResults ?
-        renderSearchResults() : null
+        searchResults
+        ? renderSearchResults()
+        : renderSearchInfo()
       }
     </div>
   )

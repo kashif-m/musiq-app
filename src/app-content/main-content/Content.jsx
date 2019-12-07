@@ -74,6 +74,7 @@ export default class Content extends Component {
           <Playlist />
           : selectedScreen === 'search' ?
           <Search
+            metadata={metadata}
             searchResults={[searchResults, this.updateSearchResults]}
             musicProvider={musicProvider}
             user={user}

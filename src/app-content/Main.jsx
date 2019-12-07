@@ -12,7 +12,7 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-      selectedScreen: 'device',
+      selectedScreen: 'search',
       showAuthScreen: false
     }
   }
@@ -48,8 +48,8 @@ export default class Main extends Component {
         })
         .catch(err => console.log(err.response.data))
     }
-    
-    if(mP !== pMP && this.state.selectedScreen === 'local-music' && mP !== 'local')
+
+    if(mP !== pMP && this.state.selectedScreen === 'device' && mP !== 'device')
       this.setState({selectedScreen: 'search'})
   }
 

@@ -80,7 +80,6 @@ export default class LocalMusic extends Component {
 		)
 	}
 
-	
 	render() {
 
 		const {selection} = this.state
