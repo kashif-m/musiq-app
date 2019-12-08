@@ -152,7 +152,10 @@ export default class App extends Component {
   }
   saveUser = user => localStorage.setItem('musiq__user', JSON.stringify(user))
   updateUser = user => this.setState({user})
-  updatePlayingNow = song => this.setState({playingNow: song})
+  updatePlayingNow = song => {
+    console.log(song)
+    this.setState({playingNow: song})
+  }
   updateMusicProvider = musicProvider => this.setState({musicProvider})
   updateQueue = queue => this.setState({queue})
   updateSongsInQueue = songs => {
@@ -160,8 +163,8 @@ export default class App extends Component {
     temp.playing = true
     temp.songs = songs
     temp.current = 0
-    this.setState({queue: temp})
     this.updatePlayingNow(temp.songs[0])
+    this.setState({queue: temp})
   }
 
   render() {

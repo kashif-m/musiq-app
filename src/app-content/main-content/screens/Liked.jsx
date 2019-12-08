@@ -11,6 +11,8 @@ export default props => {
   const [playingNow, updatePlayingNow] = props.playingNow
   const [musicProvider, updateMusicProvider] = props.musicProvider
 
+  console.log(likedSongs)
+
   const playYoutube = data => {
 
     if(musicProvider !== 'youtube')
@@ -43,7 +45,7 @@ export default props => {
 
   const shuffle = array => {
 
-    for(let i = array.length - 1; i > 0; i--){
+    for(let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * i)
       const temp = array[i]
       array[i] = array[j]
@@ -61,7 +63,7 @@ export default props => {
         onClick={() => updateSongsInQueue(shuffle(likedSongs.map(song => song.data).reverse()))} >Shuffle Play</div>
     </div>
   )
-  
+
   return (
     <div className="liked-music">
       <div className="heading">

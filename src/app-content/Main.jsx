@@ -12,7 +12,7 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-      selectedScreen: 'search',
+      selectedScreen: 'music',
       showAuthScreen: false
     }
   }
@@ -39,11 +39,11 @@ export default class Main extends Component {
     const [pMP, uPMP] = prevProps.musicProvider
     const [mP, uMP] = this.props.musicProvider
     if(!prevProps.user && JSON.stringify(user) !== JSON.stringify(pU)
-      || user && !user.likedSongs) {
+      || user && (user.likedSongs && user.likedSongs.length === 0) ) {
       axios.get('http://localhost:5000/user-data/liked-music', {headers: {Authorization: user.token}})
         .then(res => {
           const temp = {...user}
-          temp.likedSongs = res.data
+          temp.likedSongs = res.data.length === 0 ? false : res.data
           updateUser(temp)
         })
         .catch(err => console.log(err.response.data))
