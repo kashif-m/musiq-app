@@ -51,6 +51,11 @@ export default class Content extends Component {
     return true
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    // console.log(prevProps.user)
+    // console.log(this.props.user)
+  }
+
   updateSearchResults = searchResults => this.setState({searchResults})
 
   render() {
@@ -58,7 +63,8 @@ export default class Content extends Component {
     const [musicProvider, updateMusicProvider] = this.props.musicProvider
     const [playingNow, updatePlayingNow] = this.props.playingNow
     const [selectedScreen, updateScreen] = this.props.screen
-    const {user, updateSongsInQueue} = this.props
+    const [queue, updateSongsInQueue] = this.props.queue
+    const {user} = this.props
     const {searchResults, metadata} = this.state
   
     return (
@@ -66,10 +72,8 @@ export default class Content extends Component {
         {
           selectedScreen === 'music' ?
           <Liked
-            musicProvider={[musicProvider, updateMusicProvider]}
-            updateSongsInQueue={updateSongsInQueue}
-            likedSongs={user.likedSongs}
-            playingNow={[playingNow, updatePlayingNow]} />
+            queue={[queue, updateSongsInQueue]}
+            likedSongs={user.likedSongs} />
           : selectedScreen === 'playlist' ?
           <Playlist />
           : selectedScreen === 'search' ?

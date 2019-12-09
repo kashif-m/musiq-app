@@ -57,15 +57,14 @@ export default class Player extends Component {
   shouldComponentUpdate(nextProps, nextState) {
 
     if(nextProps.musicProvider !== this.props.musicProvider) {
-      if(nextProps.musicProvider === 'youtube') {
+      if(nextProps.musicProvider === 'youtube')
         this.player = new YTPlayer('#music-player')
-      } else {
+      else {
         this.player.destroy()
         this.player = false
       }
       return false
     }
-
     return true
   }
 
@@ -214,7 +213,10 @@ export default class Player extends Component {
     axios.post('http://localhost:5000/user-data/like', data, {headers: {Authorization: user.token}})
       .then(res => {
         const temp = {...user}
-        temp.likedSongs = res.data
+        temp.likedSongs = res.data.length === 0 ? false
+        : res.data.sort((a, b) => {
+            return new Date(a.savedOn) - new Date(b.savedOn)
+          }).reverse()
         updateUser(temp)
       })
       .catch(err => console.log(err.response))
@@ -331,7 +333,7 @@ export default class Player extends Component {
     const {etag} = this.props.playingNow
     const {likedSongs} = this.props.user
     
-    return likedSongs && likedSongs.filter(song => song.data.etag === etag).length === 1
+    return likedSongs && likedSongs.filter(song => song.song.data.etag === etag).length === 1
   }
 
   renderButtons = () => {

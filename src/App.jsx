@@ -146,25 +146,26 @@ export default class App extends Component {
   }
 
   logout = () => {
-    console.log('logging out')
     localStorage.removeItem('musiq__user')
     window.location.reload()
   }
   saveUser = user => localStorage.setItem('musiq__user', JSON.stringify(user))
   updateUser = user => this.setState({user})
   updatePlayingNow = song => {
-    console.log(song)
+    this.setState({queue: false})
     this.setState({playingNow: song})
   }
   updateMusicProvider = musicProvider => this.setState({musicProvider})
   updateQueue = queue => this.setState({queue})
-  updateSongsInQueue = songs => {
+  updateSongsInQueue = (songs, play = false) => {
+
     const temp = {...this.state.queue}
-    temp.playing = true
-    temp.songs = songs
+    temp.playing = play
+    temp.songs = songs.map(savedTrack => savedTrack.song.data)
     temp.current = 0
-    this.updatePlayingNow(temp.songs[0])
-    this.setState({queue: temp})
+    if(this.state.musicProvider !== songs[0].song.from)
+      this.setState({musicProvider: songs[0].song.from})
+    this.setState({queue: temp, playingNow: temp.songs[0]})
   }
 
   render() {
@@ -178,7 +179,7 @@ export default class App extends Component {
           logout={this.logout}
           user={user} />
         <Main
-          updateSongsInQueue={this.updateSongsInQueue}
+          queue={[queue, this.updateSongsInQueue]}
           musicProvider={[musicProvider, this.updateMusicProvider]}
           getSpotifyCode={this.getSpotifyCode}
           playingNow={[playingNow, this.updatePlayingNow]}

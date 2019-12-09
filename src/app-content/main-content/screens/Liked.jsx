@@ -7,37 +7,28 @@ import YoutubeIcon from '../../../assets/images/youtube.svg'
 
 export default props => {
 
-  const {likedSongs, updateSongsInQueue} = props
-  const [playingNow, updatePlayingNow] = props.playingNow
-  const [musicProvider, updateMusicProvider] = props.musicProvider
-
-  console.log(likedSongs)
-
-  const playYoutube = data => {
-
-    if(musicProvider !== 'youtube')
-      updateMusicProvider('youtube')
-    updatePlayingNow(data)
-  }
+  const {likedSongs} = props
+  const [queue, updateSongsInQueue] = props.queue
 
   const renderSongList = () => {
+    
     return (
       <div className="song-list">
         {
-          likedSongs.map(song => {
-
+          likedSongs.map(savedTrack => {
+            const {song, savedOn} = savedTrack
             const {data, _id, from} = song
             return (
               <div className="song" key={_id} >
                 {from === 'youtube' ? <SVG src={YoutubeIcon} className='from' /> : <SVG src={SpotifyIcon} className='from' />}
                 <img src={data.snippet.thumbnails.medium.url} alt=""
-                  onClick={() => playYoutube(data)} />
+                  onClick={() => updateSongsInQueue([savedTrack], true)} />
                 <div className="title"
-                  onClick={() => playYoutube(data)} >{data.snippet.title}</div>
+                  onClick={() => updateSongsInQueue([savedTrack], true)} >{data.snippet.title}</div>
                 <div className="artist">{data.snippet.channelTitle}</div>
               </div>
             )
-          }).reverse()
+          })
         }
       </div>
     )
@@ -45,22 +36,26 @@ export default props => {
 
   const shuffle = array => {
 
+    const shuffledArray = [...array]
+
     for(let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * i)
-      const temp = array[i]
-      array[i] = array[j]
-      array[j] = temp
+      const temp = shuffledArray[i]
+      shuffledArray[i] = shuffledArray[j]
+      shuffledArray[j] = temp
     }
 
-    return array
+    return shuffledArray
   }
 
   const renderPlayButtons = () => (
     <div className="play-buttons">
-      <div className="play"
-        onClick={() => updateSongsInQueue(likedSongs.map(song => song.data).reverse())} >Play</div>
+      <div className={`play${queue && queue.playing ? 'ing' : ''}`}
+        onClick={() => updateSongsInQueue(likedSongs, true) } >
+          {queue && queue.playing ? 'Playing' : 'Play'}
+      </div>
       <div className="shuffle"
-        onClick={() => updateSongsInQueue(shuffle(likedSongs.map(song => song.data).reverse()))} >Shuffle Play</div>
+        onClick={() => updateSongsInQueue(shuffle(likedSongs), true)} >Shuffle Play</div>
     </div>
   )
 

@@ -17,12 +17,6 @@ export default class Main extends Component {
     }
   }
 
-  componentDidMount() {
-
-    const [user, updateUser] = this.props.user
-    // if(!user && this.state.selectedScreen === 'local-music')
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
 
     if(JSON.stringify(nextProps.playingNow[0]) !== JSON.stringify(this.props.playingNow[0]) &&
@@ -39,11 +33,14 @@ export default class Main extends Component {
     const [pMP, uPMP] = prevProps.musicProvider
     const [mP, uMP] = this.props.musicProvider
     if(!prevProps.user && JSON.stringify(user) !== JSON.stringify(pU)
-      || user && (user.likedSongs && user.likedSongs.length === 0) ) {
+      || user && (user.likedSongs && user.likedSongs.length === 0) || !user.likedSongs ) {
       axios.get('http://localhost:5000/user-data/liked-music', {headers: {Authorization: user.token}})
         .then(res => {
           const temp = {...user}
-          temp.likedSongs = res.data.length === 0 ? false : res.data
+          temp.likedSongs = res.data.length === 0 ? false
+          : res.data.sort((a, b) => {
+              return new Date(a.savedOn) - new Date(b.savedOn)
+            }).reverse()
           updateUser(temp)
         })
         .catch(err => console.log(err.response.data))
@@ -58,9 +55,10 @@ export default class Main extends Component {
   
   render() {
 
-    const {getSpotifyCode, updateSongsInQueue} = this.props
+    const {getSpotifyCode} = this.props
     const [user, updateUser] = this.props.user
     const [musicProvider, updateMusicProvider] = this.props.musicProvider
+    const [queue, updateSongsInQueue] = this.props.queue
     const [playingNow, updatePlayingNow] = this.props.playingNow
     const {selectedScreen, showAuthScreen} = this.state
   
@@ -72,7 +70,7 @@ export default class Main extends Component {
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
         <Content
-          updateSongsInQueue={updateSongsInQueue}
+          queue={[queue, updateSongsInQueue]}
           musicProvider={[musicProvider, updateMusicProvider]}
           playingNow={[playingNow, updatePlayingNow]}
           screen={[selectedScreen, this.updateScreen]}
