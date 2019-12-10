@@ -215,7 +215,6 @@ export default class Player extends Component {
     trackOptions.playing = true
     trackOptions.paused = false
     this.setState({trackOptions})
-    console.log(trackOptions)
   }
 
   pause = () => {
@@ -238,7 +237,6 @@ export default class Player extends Component {
     const {updatePlayingNow, musicProvider, updateMusicProvider} = this.props
     const [queue, updateQueue] = this.props.queue
     const temp = {...queue}
-    console.log(this.state.trackOptions)
 
     if(temp.current + val < temp.songs.length && temp.current + val > 0) {
 
@@ -266,7 +264,6 @@ export default class Player extends Component {
 
     axios.post('http://localhost:5000/user-data/like', data, {headers: {Authorization: user.token}})
       .then(res => {
-        console.log(res.data)
         const temp = {...user}
         temp.likedSongs = res.data.length === 0 ? false
         : res.data.sort((a, b) => {

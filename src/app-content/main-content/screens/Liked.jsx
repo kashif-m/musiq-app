@@ -103,7 +103,7 @@ export default props => {
   return (
     <div className="liked-music">
       <div className="heading">
-        Liked Music
+        <span>Liked Music</span>
         {
           likedSongs && renderPlayButtons()
         }
