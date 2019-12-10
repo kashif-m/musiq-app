@@ -212,7 +212,7 @@ export default props => {
                 <img src={thumbnails.medium.url} alt="i"
                   onClick={() => updatePlayingNow(itemTemp, true)} />
                 <div className="title"
-                  onClick={() => updatePlayingNow(itemTemp, true)} >{title}</div>
+                  onClick={() => updatePlayingNow(itemTemp, true)} >{title.replace(/&#39;/g, "'").replace(/&quot;/g, '"')}</div>
                 <div className="artist">{channelTitle}</div>
               </div>
             )
