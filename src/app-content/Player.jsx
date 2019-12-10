@@ -91,12 +91,11 @@ export default class Player extends Component {
 
   checkTitle = (onLoad = false) => {
 
-    const {playingNow, musicProvider} = this.props
+    const {playingNow} = this.props
     const f = onLoad ? true : !this.state.fullscreen
-    const [queue, updateQueue] = this.props.queue
-    let title = musicProvider === 'spotify' ? playingNow.name
-        : musicProvider === 'youtube' ? playingNow.snippet.title
-        : musicProvider === 'device' ? playingNow.common.title : ''
+    let title = playingNow.from === 'spotify' ? playingNow.name
+        : playingNow.from === 'youtube' ? playingNow.snippet.title
+        : playingNow.from === 'device' ? playingNow.common.title : ''
     if(title.length > 20 && f)
       title = title.slice(0, 20) + ' ...'
     if(!onLoad)
@@ -194,21 +193,21 @@ export default class Player extends Component {
 
   load = () => {
 
-    const {musicProvider, playingNow} = this.props
-    if(musicProvider === 'spotify')
+    const {playingNow} = this.props
+    if(playingNow.from === 'spotify')
       console.log('play-spotify')
-    else if(musicProvider === 'youtube')
+    else if(playingNow.from === 'youtube')
       this.playYoutube(playingNow.id.videoId)
-    else if(musicProvider === 'device')
+    else if(playingNow.from === 'device')
       this.playLocalMusic()
   }
 
   resume = () => {
 
-    const {musicProvider} = this.props
-    if(musicProvider === 'youtube')
+    const {playingNow} = this.props
+    if(playingNow.from === 'youtube')
       this.YTplayer.play()
-    else if(musicProvider === 'device')
+    else if(playingNow.from === 'device')
       this.LocalPlayer.play()
 
     const trackOptions = {...this.state.trackOptions}
@@ -219,11 +218,11 @@ export default class Player extends Component {
 
   pause = () => {
     
-    const {musicProvider} = this.props
+    const {playingNow} = this.props
 
-    if(musicProvider === 'youtube')
+    if(playingNow.from === 'youtube')
       this.YTplayer.pause()
-    else if(musicProvider === 'device')
+    else if(playingNow.from === 'device')
       this.LocalPlayer.pause()
 
     const trackOptions = {...this.state.trackOptions}
@@ -250,15 +249,15 @@ export default class Player extends Component {
 
   saveSong = () => {
 
-    const {user, musicProvider, playingNow, updateUser} = this.props
+    const {user, playingNow, updateUser} = this.props
 
     let song = false
-    if(musicProvider === 'device')
+    if(playingNow.from === 'device')
       song = playingNow.path
     else song = playingNow
 
     const data = {
-      musicProvider,
+      musicProvider: playingNow.from,
       songDetails: song
     }
 
@@ -277,7 +276,7 @@ export default class Player extends Component {
   seek = event => {
     
     const {trackOptions} = this.state
-    const {musicProvider} = this.props
+    const {playingNow} = this.props
     let start, end
     if(this.state.fullscreen)
       start = 20
@@ -290,9 +289,9 @@ export default class Player extends Component {
     end = clientWidth + start
     const perc = this.mapValue(event.clientX, start, end, 0, 100)
 
-    if(musicProvider === 'youtube')
+    if(playingNow.from === 'youtube')
       this.YTplayer.seek(perc * trackOptions.duration / 100)
-    else if(musicProvider === 'device')
+    else if(playingNow.from === 'device')
       this.LocalPlayer.currentTime = perc * trackOptions.duration / 100
   }
 
