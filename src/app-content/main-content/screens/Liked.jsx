@@ -8,8 +8,18 @@ import YoutubeIcon from '../../../assets/images/youtube.svg'
 
 export default props => {
 
-  const {likedSongs, getLocalTrack} = props
+  const {likedSongs, getLocalTrack, metadata} = props
   const [queue, updateSongsInQueue] = props.queue
+  const [loading, updateLoading] = useState(true)
+
+  useEffect(() => {
+    const loading = deviceSongPresent() && !metadata
+    updateLoading(loading)
+  }, [likedSongs, metadata])
+
+  const deviceSongPresent = () =>
+    likedSongs ? likedSongs.filter(song => song.song.from === 'device').length > 0
+    : true
 
   const renderLocalSong = savedTrack => {
     let filteredTracks = getLocalTrack(savedTrack.song.uniqueid)
@@ -85,6 +95,11 @@ export default props => {
     </div>
   )
 
+  const likedSongsInfo = () => 
+    <div className="empty">
+      {!loading ? 'Start saving your favorite songs for them to appear here.' : 'Loading ...'}
+    </div>
+
   return (
     <div className="liked-music">
       <div className="heading">
@@ -94,8 +109,7 @@ export default props => {
         }
       </div>
       {
-        !likedSongs ?
-        <div className="empty">Start saving your favorite songs for them to appear here.</div>
+        !likedSongs || loading ? likedSongsInfo()
         : renderSongList()
       }
     </div>
