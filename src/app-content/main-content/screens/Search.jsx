@@ -206,7 +206,7 @@ export default props => {
             const {snippet} = item
             const {channelTitle, title, thumbnails} = snippet
             const itemTemp = {...item}
-            itemTemp.from = 'spotify'
+            itemTemp.from = 'youtube'
             return (
               <div className="track" key={item.etag} >
                 <img src={thumbnails.medium.url} alt="i"
