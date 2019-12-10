@@ -37,11 +37,11 @@ export default class SideBar extends Component {
       <div className="sidebar--options">
         <div className="music-providers">
           <SVG src={SpotifyIcon} className={spotifyClass}
-            onClick={() => updateMusicProvider('spotify', true)} />
+            onClick={() => updateMusicProvider('spotify', false)} />
           <SVG src={YoutubeIcon} className={youtubeClass}
-            onClick={() => updateMusicProvider('youtube', true)} />
+            onClick={() => updateMusicProvider('youtube', false)} />
           <SVG src={FolderIcon} className={deviceClass}
-            onClick={() => updateMusicProvider('device', true)} />
+            onClick={() => updateMusicProvider('device', false)} />
         </div>
         <div className="options">
           <div className={`option ${selectedScreen === 'music' ? 'selected' : ''}`}

@@ -48,11 +48,11 @@ export default class Player extends Component {
 
   componentDidUpdate(prevProps, prevState) {
 
-    if(prevProps.musicProvider !== this.props.musicProvider) {
-      if(prevProps.musicProvider === 'youtube' && this.props.musicProvider === 'device') {
+    if(prevProps.playingNow.from !== this.props.playingNow.from) {
+      if(prevProps.playingNow.from === 'youtube' && this.props.playingNow.from === 'device') {
         this.destroyYT()
         this.LocalPlayer = new Audio()
-      } else if(prevProps.musicProvider === 'device' && this.props.musicProvider === 'youtube') {
+      } else if(prevProps.playingNow.from === 'device' && this.props.playingNow.from === 'youtube') {
         this.destroyLocal()
         this.YTplayer = new YTPlayer('#music-player')
       }
@@ -390,15 +390,15 @@ export default class Player extends Component {
 
   isSaved = () => {
 
-    const {musicProvider} = this.props
+    const {playingNow} = this.props
     const {likedSongs} = this.props.user
-    if(musicProvider === 'youtube') {
+    if(playingNow.from === 'youtube') {
 
-      const {etag} = this.props.playingNow
+      const {etag} = playingNow
       return likedSongs && likedSongs.filter(song => song.song.data.etag === etag).length === 1
-    } else if(musicProvider === 'device') {
+    } else if(playingNow.from === 'device') {
 
-      const {path} = this.props.playingNow
+      const {path} = playingNow
       return likedSongs && likedSongs.filter(song => song.song.data.path === path).length === 1
     }
   }
@@ -441,15 +441,14 @@ export default class Player extends Component {
   render() {
 
     const {fullscreen} = this.state
-    const {musicProvider} = this.props
-
+    const {playingNow} = this.props
     return (
       <div className={`player${fullscreen ? ' fullscreen' : ''}`} >
         { fullscreen ? this.renderButtons() : this.renderSongOptions() }
         {
-          musicProvider === 'spotify' ? this.renderSpotifyDetails()
-          : musicProvider === 'youtube' ? this.renderYoutubeDetails()
-          : musicProvider === 'device' ? this.renderLocalMusicDetails()
+          playingNow.from === 'spotify' ? this.renderSpotifyDetails()
+          : playingNow.from === 'youtube' ? this.renderYoutubeDetails()
+          : playingNow.from === 'device' ? this.renderLocalMusicDetails()
           : null
         }
         {this.renderPlayer()}
