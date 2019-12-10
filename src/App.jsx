@@ -147,12 +147,15 @@ export default class App extends Component {
     window.location.reload()
   }
 
+  shouldUpdateMusicProvider = musicProvider => musicProvider !== this.state.musicProvider
   saveUser = user => localStorage.setItem('musiq__user', JSON.stringify(user))
   updateUser = user => this.setState({user})
   updatePlayingNow = (song, reset = true) => {
     if(reset)
       this.setState({queue: false})
     this.setState({playingNow: song})
+    if(this.shouldUpdateMusicProvider(song.from))
+      this.setState({musicProvider: song.from})
   }
   updateMusicProvider = (musicProvider, reset = false) => {
     this.setState({musicProvider})

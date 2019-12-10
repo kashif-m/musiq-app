@@ -121,12 +121,14 @@ export default props => {
           items.map(item => {
             const {artists, name, id, album} = item
             const {images} = album
+            const itemTemp = {...item}
+            itemTemp.from = 'spotify'
             return (
               <div className="track" key={id} >
                 <img src={images.length > 0 ? images[2].url : null} alt="ti"
-                  onClick={() => updatePlayingNow(item)} />
+                  onClick={() => updatePlayingNow(itemTemp, true)} />
                 <div className="title"
-                  onClick={() => updatePlayingNow(item)} >{name}</div>
+                  onClick={() => updatePlayingNow(itemTemp, true)} >{name}</div>
                 <div className="artist">{artists[0].name}</div>
               </div>
             )
@@ -203,12 +205,14 @@ export default props => {
           items.map(item => {
             const {snippet} = item
             const {channelTitle, title, thumbnails} = snippet
+            const itemTemp = {...item}
+            itemTemp.from = 'spotify'
             return (
               <div className="track" key={item.etag} >
                 <img src={thumbnails.medium.url} alt="i"
-                  onClick={() => updatePlayingNow(item)} />
+                  onClick={() => updatePlayingNow(itemTemp, true)} />
                 <div className="title"
-                  onClick={() => updatePlayingNow(item)} >{title}</div>
+                  onClick={() => updatePlayingNow(itemTemp, true)} >{title}</div>
                 <div className="artist">{channelTitle}</div>
               </div>
             )
@@ -230,17 +234,19 @@ export default props => {
 					
                 const {artist, title, picture} = song.common
                 const url = picture ? picture[0].url : false
+                const songTemp = {...song}
+                songTemp.from = 'device'
                 return (
                   <div className="track" key={song.path} >
                     {
                       url ?
                       <img src={url} alt="i" className='cover'
-                        onClick={() => updatePlayingNow(song)} />
+                        onClick={() => updatePlayingNow(songTemp, true)} />
                       : <SVG src={DefaultCover} className='cover'
-                          onClick={() => updatePlayingNow(song)} />
+                          onClick={() => updatePlayingNow(songTemp, true)} />
                     }
                     <div className="title"
-                      onClick={() => updatePlayingNow(song)} >{title}</div>
+                      onClick={() => updatePlayingNow(songTemp, true)} >{title}</div>
                     <div className="artist">{artist}</div>
                     <div className="album"></div>
                   </div>)

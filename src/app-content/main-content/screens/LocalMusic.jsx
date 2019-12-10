@@ -42,17 +42,19 @@ export default class LocalMusic extends Component {
 					
 						const {artist, title, picture} = song.common
 						const url = picture ? picture[0].url : false
+						const songTemp = {...song}
+						songTemp.from = 'device'
 						return (
 							<div className="song" key={title} >
 								{
 									url ?
 									<img src={url} alt="i" className='cover'
-										onClick={() => updatePlayingNow(song)} />
+										onClick={() => updatePlayingNow(songTemp, true)} />
 									: <SVG src={DefaultCover} className='cover'
-											onClick={() => updatePlayingNow(song)} />
+											onClick={() => updatePlayingNow(songTemp, true)} />
 								}
 								<div className="title"
-									onClick={() => updatePlayingNow(song)} >{title}</div>
+									onClick={() => updatePlayingNow(songTemp, true)} >{title}</div>
 								<div className="artist">{artist}</div>
 								<div className="album"></div>
 							</div>)

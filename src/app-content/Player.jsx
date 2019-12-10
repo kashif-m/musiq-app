@@ -375,7 +375,6 @@ export default class Player extends Component {
 
     const song = this.props.playingNow
     const {picture, artist} = song.common
-    
     return (
       <React.Fragment>
         <img src={picture && picture[0].url} alt=""
