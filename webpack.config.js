@@ -30,7 +30,7 @@ module.exports = {
         use: ['style-loader', MiniCSSExtractPlugin.loader, 'css-loader', 'sass-loader']
       },
       {
-        test: /.(ttf|otf)/,
+        test: /.(ttf|otf|flac|mp3)/,
         use: 'file-loader'
       },
       {

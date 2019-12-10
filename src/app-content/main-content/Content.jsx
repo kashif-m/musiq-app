@@ -51,11 +51,7 @@ export default class Content extends Component {
     return true
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    // console.log(prevProps.user)
-    // console.log(this.props.user)
-  }
-
+  getLocalTrack = path => this.state.metadata ? this.state.metadata.filter(track => track.path === path) : false
   updateSearchResults = searchResults => this.setState({searchResults})
 
   render() {
@@ -64,7 +60,7 @@ export default class Content extends Component {
     const [playingNow, updatePlayingNow] = this.props.playingNow
     const [selectedScreen, updateScreen] = this.props.screen
     const [queue, updateSongsInQueue] = this.props.queue
-    const {user} = this.props
+    const {user, getLocalTrack} = this.props
     const {searchResults, metadata} = this.state
   
     return (
@@ -72,6 +68,8 @@ export default class Content extends Component {
         {
           selectedScreen === 'music' ?
           <Liked
+            getLocalTrack={this.getLocalTrack}
+            metadata={metadata}
             queue={[queue, updateSongsInQueue]}
             likedSongs={user.likedSongs} />
           : selectedScreen === 'playlist' ?

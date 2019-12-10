@@ -8,12 +8,6 @@ import YoutubeIcon from '../../assets/images/youtube.svg'
 
 export default class SideBar extends Component {
 
-  componentDidUpdate(prevProps, prevState) {
-
-    const [tMP, tUMP] = this.props.musicProvider
-    const [pMP, pUMP] = prevProps.musicProvider
-  }
-
   renderLoginScreen = () => {
 
     const [showAuthScreen, updateAuthScreen] = this.props.authScreen
@@ -43,11 +37,11 @@ export default class SideBar extends Component {
       <div className="sidebar--options">
         <div className="music-providers">
           <SVG src={SpotifyIcon} className={spotifyClass}
-            onClick={() => updateMusicProvider('spotify')} />
+            onClick={() => updateMusicProvider('spotify', true)} />
           <SVG src={YoutubeIcon} className={youtubeClass}
-            onClick={() => updateMusicProvider('youtube')} />
+            onClick={() => updateMusicProvider('youtube', true)} />
           <SVG src={FolderIcon} className={deviceClass}
-            onClick={() => updateMusicProvider('device')} />
+            onClick={() => updateMusicProvider('device', true)} />
         </div>
         <div className="options">
           <div className={`option ${selectedScreen === 'music' ? 'selected' : ''}`}

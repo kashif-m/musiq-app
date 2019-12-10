@@ -63,9 +63,6 @@ export default class App extends Component {
       }
       else
         localStorage.removeItem('musiq__user')
-
-    if(prevState.musicProvider !== this.state.musicProvider && prevState.playingNow)
-      this.setState({playingNow: false})
   }
 
   getSpotifyCode = async user => {
@@ -149,22 +146,34 @@ export default class App extends Component {
     localStorage.removeItem('musiq__user')
     window.location.reload()
   }
+
   saveUser = user => localStorage.setItem('musiq__user', JSON.stringify(user))
   updateUser = user => this.setState({user})
-  updatePlayingNow = song => {
-    this.setState({queue: false})
+  updatePlayingNow = (song, reset = true) => {
+    if(reset)
+      this.setState({queue: false})
     this.setState({playingNow: song})
   }
-  updateMusicProvider = musicProvider => this.setState({musicProvider})
+  updateMusicProvider = (musicProvider, reset = false) => {
+    this.setState({musicProvider})
+    if(reset)
+      this.setState({playingNow: false})
+  }
   updateQueue = queue => this.setState({queue})
-  updateSongsInQueue = (songs, play = false) => {
+  updateSongsInQueue = (songs = {}, play = false) => {
+
+    const {musicProvider} = this.state
+    if(musicProvider !== songs[0].song.from)
+      this.setState({musicProvider: songs[0].song.from})
 
     const temp = {...this.state.queue}
     temp.playing = play
-    temp.songs = songs.map(savedTrack => savedTrack.song.data)
+    temp.songs = songs.map(savedTrack => {
+      const temp = {...savedTrack.song.data}
+      temp.from = savedTrack.song.from
+      return temp
+    })
     temp.current = 0
-    if(this.state.musicProvider !== songs[0].song.from)
-      this.setState({musicProvider: songs[0].song.from})
     this.setState({queue: temp, playingNow: temp.songs[0]})
   }
 
@@ -187,6 +196,7 @@ export default class App extends Component {
         {
           playingNow ?
           <Player
+            updateMusicProvider={this.updateMusicProvider}
             queue={[queue, this.updateQueue]}
             musicProvider={musicProvider}
             playingNow={playingNow}

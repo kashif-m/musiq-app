@@ -37,9 +37,10 @@ export default class Main extends Component {
       axios.get('http://localhost:5000/user-data/liked-music', {headers: {Authorization: user.token}})
         .then(res => {
           const temp = {...user}
+          res.data.map(song => console.log(song.song.data))
           temp.likedSongs = res.data.length === 0 ? false
           : res.data.sort((a, b) => {
-              return new Date(a.savedOn) - new Date(b.savedOn)
+              return (new Date(a.savedOn) - new Date(b.savedOn))
             }).reverse()
           updateUser(temp)
         })
@@ -65,11 +66,13 @@ export default class Main extends Component {
     return (
       <div className='main' >
         <SideBar
+          updatePlayingNow={updatePlayingNow}
           musicProvider={[musicProvider, updateMusicProvider]}
           authScreen={[showAuthScreen, this.updateAuthScreen]}
           screen={[selectedScreen, this.updateScreen]}
           user={user} />
         <Content
+          updateUser={updateUser}
           queue={[queue, updateSongsInQueue]}
           musicProvider={[musicProvider, updateMusicProvider]}
           playingNow={[playingNow, updatePlayingNow]}
