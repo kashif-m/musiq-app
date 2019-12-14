@@ -37,7 +37,6 @@ export default class Main extends Component {
       axios.get('http://localhost:5000/user-data/liked-music', {headers: {Authorization: user.token}})
         .then(res => {
           const temp = {...user}
-          res.data.map(song => console.log(song.song.data))
           temp.likedSongs = res.data.length === 0 ? false
           : res.data.sort((a, b) => {
               return (new Date(a.savedOn) - new Date(b.savedOn))

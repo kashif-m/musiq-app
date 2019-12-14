@@ -6,7 +6,4 @@ module.exports = {
     clientID: 'ee0ee115a2c5482eabff545e3a891c64',
     clientSecret: '994eb5cd854c43f78d648a6106dfd73f'
   },
-  redirectURI: {
-    dev: 'http://localhost:8080',
-  }
 }

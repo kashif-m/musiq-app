@@ -8,7 +8,7 @@ import Header from './app-content/Header.jsx'
 import Main from './app-content/Main.jsx'
 import Player from './app-content/Player.jsx'
 
-import {redirectURI, spotify} from './config/keys'
+import {spotify} from './config/keys'
 
 export default class App extends Component {
 
@@ -59,7 +59,7 @@ export default class App extends Component {
       if(Object.keys(this.state.user).length > 0) {
         this.saveUser(this.state.user)
         if(Object.keys(queryString.parseUrl(window.location.href).query).length > 0)
-          window.location.href = redirectURI.dev
+          window.location.href = this.getHostname()
       }
       else
         localStorage.removeItem('musiq__user')
@@ -69,17 +69,20 @@ export default class App extends Component {
 
     this.setState({loading: true})
     const {query} = queryString.parseUrl(window.location.href)
+    const redirect_uri = this.getHostname()
 
     if(!query.code) {
       const scopes = encodeURI(["streaming", "user-read-email", "user-read-private", "user-modify-playback-state"].join(' '))
-      return window.location.replace(`https://accounts.spotify.com/authorize?client_id=${spotify.clientID}&response_type=code&redirect_uri=${redirectURI.dev}&scope=${scopes}`)
+      return window.location.replace(`https://accounts.spotify.com/authorize?client_id=${spotify.clientID}&response_type=code&redirect_uri=${redirect_uri}&scope=${scopes}`)
     }
 
     const data = {
       code: query.code,
-      grant_type: 'authorization_code'
+      grant_type: 'authorization_code',
+      redirect_uri
     }
     const res = await axios.post('http://localhost:5000/token', data)
+    console.log(res.data)
     if(!res.data.error) {
       user.spotify = res.data
       user.spotify.code = query.code
@@ -93,7 +96,8 @@ export default class App extends Component {
 
     const data = {
       refresh_token: user.spotify.refresh_token,
-      grant_type: 'refresh_token'
+      grant_type: 'refresh_token',
+      redirect_uri: this.getHostname()
     }
     const res = await axios.post('http://localhost:5000/token', data)
     if(!res.data.error) {
@@ -137,6 +141,12 @@ export default class App extends Component {
 
     // Connect to the player!
     player.connect()
+  }
+
+  getHostname = (href = window.location.href) => {
+    let parser = document.createElement('a')
+    parser.href = href
+    return parser.origin
   }
 
   logout = () => {
