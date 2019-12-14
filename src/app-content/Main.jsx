@@ -12,7 +12,7 @@ export default class Main extends Component {
     super(props)
 
     this.state = {
-      selectedScreen: 'music',
+      selectedScreen: 'device',
       showAuthScreen: false
     }
   }

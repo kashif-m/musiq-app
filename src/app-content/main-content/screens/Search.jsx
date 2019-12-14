@@ -68,7 +68,6 @@ export default props => {
     axios.get(`https://api.spotify.com/v1/search?q=${query}&type=${type.join(',')}&limit=${limit}`,
       { headers: { Authorization: access_token } })
       .then(res => {
-        console.log(res.data)
         Object.keys(res.data).length > 0
         ? updateSearchResults(res.data)
         : updateSearchResults(false)
@@ -80,7 +79,6 @@ export default props => {
   const deviceSearch = () => {
 
     const searchQuery = seachQuery.value.toLowerCase()
-    console.log(searchQuery)
     if(seachQuery.length === 0)
       updateInfo('Enter search value.')
     const {metadata} = props

@@ -70,7 +70,6 @@ export default class App extends Component {
     this.setState({loading: true})
     const {query} = queryString.parseUrl(window.location.href)
 
-    console.log(query)
     if(!query.code) {
       const scopes = encodeURI(["streaming", "user-read-email", "user-read-private", "user-modify-playback-state"].join(' '))
       return window.location.replace(`https://accounts.spotify.com/authorize?client_id=${spotify.clientID}&response_type=code&redirect_uri=${redirectURI.dev}&scope=${scopes}`)
@@ -92,7 +91,6 @@ export default class App extends Component {
 
   updateSpotifyCode = async user => {
 
-    console.log(user)
     const data = {
       refresh_token: user.spotify.refresh_token,
       grant_type: 'refresh_token'
@@ -117,7 +115,6 @@ export default class App extends Component {
       name: 'musiq player',
       getOAuthToken: cb => { cb(token) }
     })
-    // console.log(player)
 
     // Error handling
     player.addListener('initialization_error', ({ message }) => { console.error(message) })
